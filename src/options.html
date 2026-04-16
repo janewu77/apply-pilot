@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Apply Pilot - 设置</title>
+  <title>Apply Pilot - Settings</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -29,6 +29,11 @@
       gap: 10px;
       color: white;
     }
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
     .save-indicator {
       font-size: 13px;
       padding: 6px 12px;
@@ -41,6 +46,27 @@
       background: rgba(34, 197, 94, 0.3);
       color: #86efac;
     }
+
+    /* Language toggle in top bar */
+    .lang-toggle {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .lang-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 5px;
+      color: rgba(255,255,255,0.75);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .lang-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+    .lang-btn.active { background: rgba(255,255,255,0.25); color: white; border-color: rgba(255,255,255,0.7); }
 
     /* 标签页 */
     .tab-nav {
@@ -427,36 +453,45 @@
 </head>
 <body>
   <div class="top-bar">
-    <h1>🚀 Apply Pilot 设置</h1>
-    <span class="save-indicator" id="saveIndicator">所有更改自动保存</span>
+    <h1>
+      <img src="icons/icon48.png" style="width:28px;height:28px;border-radius:6px;vertical-align:middle;">
+      <span data-i18n="options.title" style="vertical-align:middle;">Apply Pilot Settings</span>
+    </h1>
+    <div class="top-bar-right">
+      <div class="lang-toggle">
+        <button class="lang-btn active" id="langEn">EN</button>
+        <button class="lang-btn" id="langZh">中</button>
+      </div>
+      <span class="save-indicator" id="saveIndicator" data-i18n="options.saveAuto">All changes auto-saved</span>
+    </div>
   </div>
 
   <div class="tab-nav">
-    <button class="tab-btn active" data-tab="profile">📋 个人档案</button>
-    <button class="tab-btn" data-tab="links">🔗 在线资料</button>
-    <button class="tab-btn" data-tab="work">💼 工作信息</button>
-    <button class="tab-btn" data-tab="qa">💬 常见问答</button>
-    <button class="tab-btn" data-tab="llm">🤖 AI 设置</button>
-    <button class="tab-btn" data-tab="data">📦 数据管理</button>
+    <button class="tab-btn active" data-tab="profile" data-i18n="options.tab.profile">📋 Profile</button>
+    <button class="tab-btn" data-tab="links" data-i18n="options.tab.links">🔗 Links</button>
+    <button class="tab-btn" data-tab="work" data-i18n="options.tab.work">💼 Work</button>
+    <button class="tab-btn" data-tab="qa" data-i18n="options.tab.qa">💬 Q&amp;A</button>
+    <button class="tab-btn" data-tab="llm" data-i18n="options.tab.llm">🤖 AI Settings</button>
+    <button class="tab-btn" data-tab="data" data-i18n="options.tab.data">📦 Data</button>
   </div>
 
   <div class="main">
 
-    <!-- ========== 个人档案 ========== -->
+    <!-- ========== Profile ========== -->
     <div class="tab-content active" id="tab-profile">
 
-      <!-- 智能导入卡片 -->
+      <!-- Smart Import -->
       <div class="card" id="smartImportCard">
-        <div class="card-title">📄 智能导入 — 上传简历，一键填好档案</div>
-        <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
-          上传你的简历或个人介绍文档，AI 自动提取所有信息填入档案。需要先在「AI 设置」中配置 API Key。
+        <div class="card-title" data-i18n="options.smartImport.title">📄 Smart Import — Upload resume, auto-fill profile</div>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;" data-i18n="options.smartImport.desc">
+          Upload your resume or personal profile document. AI will automatically extract all information to fill in the profile. Requires API Key configured in AI Settings.
         </p>
 
         <div class="smart-import-zone" id="smartImportZone">
           <input type="file" id="smartImportFile" accept=".pdf,.md,.txt,.markdown" style="display:none;">
           <div class="zone-icon">📎</div>
-          <div class="zone-title">点击上传 或 拖拽文件到这里</div>
-          <div class="zone-desc">AI 将自动提取个人信息、工作经历、教育背景、技能等</div>
+          <div class="zone-title" data-i18n="options.smartImport.dropTitle">Click to upload or drag file here</div>
+          <div class="zone-desc" data-i18n="options.smartImport.dropDesc">AI will automatically extract personal info, work experience, education, skills, etc.</div>
           <div class="zone-formats">
             <span class="format-tag">PDF</span>
             <span class="format-tag">Markdown</span>
@@ -466,15 +501,15 @@
 
         <div class="import-progress" id="importProgress">
           <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div>
-          <div class="progress-text" id="progressText">准备中...</div>
+          <div class="progress-text" id="progressText" data-i18n="options.smartImport.prep">Preparing...</div>
         </div>
 
         <div class="import-preview" id="importPreview">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-size: 13px; font-weight: 600; color: #22c55e;">✅ AI 提取完成，请检查：</span>
+            <span style="font-size: 13px; font-weight: 600; color: #22c55e;" data-i18n="options.smartImport.extractDone">✅ AI extraction complete, please review:</span>
             <div style="display: flex; gap: 8px;">
-              <button class="btn btn-primary" id="applyImportBtn">确认写入档案</button>
-              <button class="btn btn-secondary" id="cancelImportBtn">取消</button>
+              <button class="btn btn-primary" id="applyImportBtn" data-i18n="options.smartImport.confirmBtn">Confirm &amp; Apply to Profile</button>
+              <button class="btn btn-secondary" id="cancelImportBtn" data-i18n="options.smartImport.cancelBtn">Cancel</button>
             </div>
           </div>
           <div class="preview-grid" id="previewGrid"></div>
@@ -482,125 +517,125 @@
       </div>
 
       <div class="card">
-        <div class="card-title">👤 基本信息</div>
+        <div class="card-title" data-i18n="options.profile.basicInfo">👤 Basic Information</div>
         <div class="form-grid">
           <div class="field">
-            <label>名 (First Name)</label>
+            <label data-i18n="options.profile.firstName">First Name</label>
             <input type="text" data-key="personal.firstName" placeholder="Jane">
           </div>
           <div class="field">
-            <label>姓 (Last Name)</label>
+            <label data-i18n="options.profile.lastName">Last Name</label>
             <input type="text" data-key="personal.lastName" placeholder="Wu">
           </div>
           <div class="field full-width">
-            <label>全名 (Full Name)</label>
+            <label data-i18n="options.profile.fullName">Full Name</label>
             <input type="text" data-key="personal.fullName" placeholder="Jane Wu">
-            <span class="hint">用于只有一个姓名输入框的网站</span>
+            <span class="hint" data-i18n="options.profile.fullNameHint">For sites with a single name input field</span>
           </div>
           <div class="field">
-            <label>邮箱 (Email)</label>
+            <label data-i18n="options.profile.email">Email</label>
             <input type="email" data-key="personal.email" placeholder="your@email.com">
           </div>
           <div class="field">
-            <label>电话 (Phone)</label>
+            <label data-i18n="options.profile.phone">Phone</label>
             <input type="tel" data-key="personal.phone" placeholder="+49 xxx xxxx">
           </div>
           <div class="field">
-            <label>出生日期</label>
+            <label data-i18n="options.profile.dob">Date of Birth</label>
             <input type="date" data-key="personal.dateOfBirth">
           </div>
           <div class="field">
-            <label>性别</label>
+            <label data-i18n="options.profile.gender">Gender</label>
             <select data-key="personal.gender">
-              <option value="">-- 选择 --</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-              <option value="prefer_not_to_say">Prefer not to say</option>
+              <option value="" data-i18n="options.select.prompt">-- Select --</option>
+              <option value="male" data-i18n="options.gender.male">Male</option>
+              <option value="female" data-i18n="options.gender.female">Female</option>
+              <option value="other" data-i18n="options.gender.other">Other</option>
+              <option value="prefer_not_to_say" data-i18n="options.gender.preferNotToSay">Prefer not to say</option>
             </select>
           </div>
           <div class="field">
-            <label>国籍</label>
+            <label data-i18n="options.profile.nationality">Nationality</label>
             <input type="text" data-key="personal.nationality" placeholder="Chinese">
           </div>
           <div class="field">
-            <label>当前所在地</label>
+            <label data-i18n="options.profile.location">Current Location</label>
             <input type="text" data-key="personal.currentLocation" placeholder="Berlin, Germany">
           </div>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-title">🏠 地址</div>
+        <div class="card-title" data-i18n="options.profile.address">🏠 Address</div>
         <div class="form-grid">
           <div class="field full-width">
-            <label>街道地址</label>
+            <label data-i18n="options.profile.street">Street Address</label>
             <input type="text" data-key="address.street" placeholder="Musterstraße 1">
           </div>
           <div class="field">
-            <label>城市</label>
+            <label data-i18n="options.profile.city">City</label>
             <input type="text" data-key="address.city" placeholder="Berlin">
           </div>
           <div class="field">
-            <label>州/省</label>
+            <label data-i18n="options.profile.state">State / Province</label>
             <input type="text" data-key="address.state" placeholder="Berlin">
           </div>
           <div class="field">
-            <label>邮编</label>
+            <label data-i18n="options.profile.postal">Postal Code</label>
             <input type="text" data-key="address.postalCode" placeholder="10115">
           </div>
           <div class="field">
-            <label>国家</label>
+            <label data-i18n="options.profile.country">Country</label>
             <input type="text" data-key="address.country" placeholder="Germany">
           </div>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-title">🎓 教育背景</div>
+        <div class="card-title" data-i18n="options.profile.education">🎓 Education</div>
         <div class="form-grid">
           <div class="field">
-            <label>最高学历</label>
+            <label data-i18n="options.profile.degree">Highest Degree</label>
             <input type="text" data-key="education.highestDegree" placeholder="Master's">
           </div>
           <div class="field">
-            <label>学校</label>
+            <label data-i18n="options.profile.university">University</label>
             <input type="text" data-key="education.university" placeholder="University of ...">
           </div>
           <div class="field">
-            <label>专业</label>
+            <label data-i18n="options.profile.major">Major</label>
             <input type="text" data-key="education.major" placeholder="Computer Science">
           </div>
           <div class="field">
-            <label>毕业年份</label>
+            <label data-i18n="options.profile.gradYear">Graduation Year</label>
             <input type="text" data-key="education.graduationYear" placeholder="2023">
           </div>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-title">🛠️ 技能</div>
+        <div class="card-title" data-i18n="options.profile.skills">🛠️ Skills</div>
         <div class="form-grid">
           <div class="field full-width">
-            <label>语言能力</label>
+            <label data-i18n="options.profile.langSkills">Language Skills</label>
             <input type="text" data-key="skills.languages" placeholder="Chinese (Native), English (Fluent), German (B2)">
           </div>
           <div class="field full-width">
-            <label>技术技能</label>
+            <label data-i18n="options.profile.techSkills">Technical Skills</label>
             <textarea data-key="skills.technical" placeholder="Python, JavaScript, React, AWS, Docker ..."></textarea>
           </div>
           <div class="field full-width">
-            <label>证书</label>
+            <label data-i18n="options.profile.certifications">Certifications</label>
             <input type="text" data-key="skills.certifications" placeholder="AWS Solutions Architect, PMP ...">
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ========== 在线资料 ========== -->
+    <!-- ========== Links ========== -->
     <div class="tab-content" id="tab-links">
       <div class="card">
-        <div class="card-title">🔗 在线链接</div>
+        <div class="card-title" data-i18n="options.links.title">🔗 Online Links</div>
         <div class="form-grid">
           <div class="field full-width">
             <label>LinkedIn</label>
@@ -611,11 +646,11 @@
             <input type="url" data-key="links.github" placeholder="https://github.com/yourusername">
           </div>
           <div class="field full-width">
-            <label>作品集 / Portfolio</label>
+            <label data-i18n="options.links.portfolio">Portfolio</label>
             <input type="url" data-key="links.portfolio" placeholder="https://yourportfolio.com">
           </div>
           <div class="field full-width">
-            <label>个人网站</label>
+            <label data-i18n="options.links.website">Personal Website</label>
             <input type="url" data-key="links.website" placeholder="https://yoursite.com">
           </div>
           <div class="field full-width">
@@ -626,216 +661,215 @@
       </div>
     </div>
 
-    <!-- ========== 工作信息 ========== -->
+    <!-- ========== Work ========== -->
     <div class="tab-content" id="tab-work">
       <div class="card">
-        <div class="card-title">💼 当前工作状态</div>
+        <div class="card-title" data-i18n="options.work.title">💼 Current Work Status</div>
         <div class="form-grid">
           <div class="field">
-            <label>当前职位</label>
+            <label data-i18n="options.work.currentTitle">Current Title</label>
             <input type="text" data-key="work.currentTitle" placeholder="Software Engineer">
           </div>
           <div class="field">
-            <label>当前公司</label>
+            <label data-i18n="options.work.currentCompany">Current Company</label>
             <input type="text" data-key="work.currentCompany" placeholder="Company GmbH">
           </div>
           <div class="field">
-            <label>工作年限</label>
+            <label data-i18n="options.work.yearsExp">Years of Experience</label>
             <input type="text" data-key="work.yearsOfExperience" placeholder="5">
           </div>
           <div class="field">
-            <label>通知期 (Notice Period)</label>
+            <label data-i18n="options.work.noticePeriod">Notice Period</label>
             <input type="text" data-key="work.noticePeriod" placeholder="3 months">
           </div>
           <div class="field">
-            <label>期望薪资</label>
+            <label data-i18n="options.work.salary">Salary Expectation</label>
             <input type="text" data-key="work.salaryExpectation" placeholder="65,000 EUR">
           </div>
           <div class="field">
-            <label>最早入职日期</label>
+            <label data-i18n="options.work.startDate">Earliest Start Date</label>
             <input type="text" data-key="work.startDate" placeholder="2026-07-01">
           </div>
           <div class="field">
-            <label>是否愿意搬迁</label>
+            <label data-i18n="options.work.relocate">Willing to Relocate</label>
             <select data-key="work.willingToRelocate">
-              <option value="">-- 选择 --</option>
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-              <option value="open">Open to discussion</option>
+              <option value="" data-i18n="options.select.prompt">-- Select --</option>
+              <option value="yes" data-i18n="options.relocate.yes">Yes</option>
+              <option value="no" data-i18n="options.relocate.no">No</option>
+              <option value="open" data-i18n="options.relocate.open">Open to discussion</option>
             </select>
           </div>
           <div class="field">
-            <label>工作许可</label>
+            <label data-i18n="options.work.workAuth">Work Authorization</label>
             <input type="text" data-key="work.workAuthorization" placeholder="Authorized to work in Germany">
           </div>
           <div class="field full-width">
-            <label>是否需要签证担保</label>
+            <label data-i18n="options.work.visa">Visa Sponsorship Needed</label>
             <select data-key="work.visaSponsorship">
-              <option value="">-- 选择 --</option>
-              <option value="not_needed">Not needed</option>
-              <option value="yes">Yes, need sponsorship</option>
-              <option value="no">No</option>
+              <option value="" data-i18n="options.select.prompt">-- Select --</option>
+              <option value="not_needed" data-i18n="options.visa.notNeeded">Not needed</option>
+              <option value="yes" data-i18n="options.visa.yes">Yes, need sponsorship</option>
+              <option value="no" data-i18n="options.visa.no">No</option>
             </select>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ========== 常见问答 ========== -->
+    <!-- ========== Q&A ========== -->
     <div class="tab-content" id="tab-qa">
       <div class="card">
-        <div class="card-title">💬 常见面试/申请问题预设回答</div>
-        <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
-          预设常见问题的回答模板。AI 匹配到相关问题时会参考这些回答生成个性化内容。
-          在申请页扫描后，对未匹配栏位手动填写并点击「存入预设回答」，会自动出现在此处（带「自动学习」标记），下次相同线索会高置信度匹配。
+        <div class="card-title" data-i18n="options.qa.title">💬 Common Interview / Application Question Templates</div>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;" data-i18n="options.qa.desc">
+          Pre-set answers for common questions. AI uses these as reference when filling related fields. After scanning, manually fill unfilled fields and click "Save as template answer" — they will appear here (marked "Auto-learned") and matched with high confidence next time.
         </p>
 
         <div id="qaContainer">
           <div class="qa-item">
-            <label>自我介绍 (Self Introduction)</label>
-            <textarea data-key="commonAnswers.selfIntroduction" placeholder="简要介绍你的背景、经验和亮点..."></textarea>
+            <label data-i18n="options.qa.selfIntro">Self Introduction</label>
+            <textarea data-key="commonAnswers.selfIntroduction" data-i18n-ph="options.qa.answerPh" placeholder="Your answer..."></textarea>
           </div>
           <div class="qa-item">
-            <label>为什么想加入这家公司？ (Why this company?)</label>
-            <textarea data-key="commonAnswers.whyThisCompany" placeholder="通用模板，AI 会根据具体公司做个性化调整..."></textarea>
+            <label data-i18n="options.qa.whyCompany">Why this company?</label>
+            <textarea data-key="commonAnswers.whyThisCompany" data-i18n-ph="options.qa.answerPh" placeholder="Your answer..."></textarea>
           </div>
           <div class="qa-item">
-            <label>为什么对这个职位感兴趣？ (Why this role?)</label>
-            <textarea data-key="commonAnswers.whyThisRole" placeholder="你的职业兴趣和这类角色的契合点..."></textarea>
+            <label data-i18n="options.qa.whyRole">Why this role?</label>
+            <textarea data-key="commonAnswers.whyThisRole" data-i18n-ph="options.qa.answerPh" placeholder="Your answer..."></textarea>
           </div>
           <div class="qa-item">
-            <label>你的最大优势？ (Greatest strength)</label>
-            <textarea data-key="commonAnswers.greatestStrength" placeholder="列举你最突出的专业优势..."></textarea>
+            <label data-i18n="options.qa.strength">Greatest strength</label>
+            <textarea data-key="commonAnswers.greatestStrength" data-i18n-ph="options.qa.answerPh" placeholder="Your answer..."></textarea>
           </div>
           <div class="qa-item">
-            <label>你的不足？ (Greatest weakness)</label>
-            <textarea data-key="commonAnswers.greatestWeakness" placeholder="诚实但有建设性的回答..."></textarea>
+            <label data-i18n="options.qa.weakness">Greatest weakness</label>
+            <textarea data-key="commonAnswers.greatestWeakness" data-i18n-ph="options.qa.answerPh" placeholder="Your answer..."></textarea>
           </div>
           <div class="qa-item">
-            <label>职业目标 (Career goals)</label>
-            <textarea data-key="commonAnswers.careerGoals" placeholder="你的中长期职业规划..."></textarea>
+            <label data-i18n="options.qa.careerGoals">Career goals</label>
+            <textarea data-key="commonAnswers.careerGoals" data-i18n-ph="options.qa.answerPh" placeholder="Your answer..."></textarea>
           </div>
         </div>
 
         <div class="add-qa-row">
-          <input type="text" id="newQaKey" placeholder="新问题标签 (英文, 如 teamworkExample)">
-          <button class="btn btn-secondary" id="addQaBtn">+ 添加问题</button>
+          <input type="text" id="newQaKey" data-i18n-ph="options.qa.newKeyPh" placeholder="New question label (English, e.g. teamworkExample)">
+          <button class="btn btn-secondary" id="addQaBtn" data-i18n="options.qa.addBtn">+ Add Question</button>
         </div>
       </div>
     </div>
 
-    <!-- ========== AI 设置 ========== -->
+    <!-- ========== AI Settings ========== -->
     <div class="tab-content" id="tab-llm">
       <div class="card">
-        <div class="card-title">🤖 AI 语义匹配设置</div>
-        <p style="font-size: 12px; color: #64748b; margin-bottom: 16px;">
-          当关键词匹配无法识别表单字段时，AI 会分析字段语义并匹配对应信息。
-          AI 还可以为开放问题生成回答草稿。
+        <div class="card-title" data-i18n="options.llm.title">🤖 AI Semantic Matching Settings</div>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 16px;" data-i18n="options.llm.desc">
+          When keyword matching fails to identify form fields, AI will analyze field semantics and match the corresponding information. AI can also generate draft answers for open questions.
         </p>
 
         <div class="field" style="margin-bottom: 16px;">
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
             <input type="checkbox" id="llmEnabled" style="width: 16px; height: 16px;">
-            <span style="font-size: 14px; color: #f8fafc;">启用 AI 语义匹配</span>
+            <span style="font-size: 14px; color: #f8fafc;" data-i18n="options.llm.enable">Enable AI semantic matching</span>
           </label>
         </div>
 
         <div id="llmConfig">
-          <div class="card-title" style="font-size: 13px;">选择 AI 服务商</div>
+          <div class="card-title" style="font-size: 13px;" data-i18n="options.llm.selectProvider">Select AI Provider</div>
           <div class="provider-selector">
             <div class="provider-option selected" data-provider="anthropic">
-              <div class="provider-name">Anthropic (Claude)</div>
-              <div class="provider-desc">推荐 - 语义理解能力强</div>
+              <div class="provider-name" data-i18n="options.llm.anthropicName">Anthropic (Claude)</div>
+              <div class="provider-desc" data-i18n="options.llm.anthropicDesc">Recommended — strong semantic understanding</div>
             </div>
             <div class="provider-option" data-provider="openai">
-              <div class="provider-name">OpenAI (GPT)</div>
-              <div class="provider-desc">广泛使用的备选方案</div>
+              <div class="provider-name" data-i18n="options.llm.openaiName">OpenAI (GPT)</div>
+              <div class="provider-desc" data-i18n="options.llm.openaiDesc">Widely used alternative</div>
             </div>
           </div>
 
-          <!-- Anthropic 配置 -->
+          <!-- Anthropic config -->
           <div class="provider-config" id="config-anthropic">
             <div class="form-grid">
               <div class="field full-width">
-                <label>Anthropic API Key</label>
+                <label data-i18n="options.llm.anthropicKey">Anthropic API Key</label>
                 <div class="api-key-wrapper">
                   <input type="password" id="anthropicKey" placeholder="sk-ant-api03-..." data-llm="anthropic-key">
                   <button class="toggle-visibility" data-target="anthropicKey">👁️</button>
                 </div>
-                <span class="hint">从 <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color: #60a5fa;">console.anthropic.com</a> 获取</span>
+                <span class="hint" data-i18n-html="options.llm.anthropicHint">Get from <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color: #60a5fa;">console.anthropic.com</a></span>
               </div>
               <div class="field">
-                <label>模型</label>
+                <label data-i18n="options.llm.modelLabel">Model</label>
                 <select id="anthropicModel" data-llm="anthropic-model">
-                  <option value="claude-sonnet-4-5-20250514">Claude Sonnet 4.5 (推荐)</option>
-                  <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 (更快更便宜)</option>
-                  <option value="claude-sonnet-4-6">Claude Sonnet 4.6</option>
+                  <option value="claude-sonnet-4-5-20250514" data-i18n="options.llm.claudeSonnet45">Claude Sonnet 4.5 (Recommended)</option>
+                  <option value="claude-haiku-4-5-20251001" data-i18n="options.llm.claudeHaiku45">Claude Haiku 4.5 (Faster &amp; cheaper)</option>
+                  <option value="claude-sonnet-4-6" data-i18n="options.llm.claudeSonnet46">Claude Sonnet 4.6</option>
                 </select>
               </div>
             </div>
           </div>
 
-          <!-- OpenAI 配置 -->
+          <!-- OpenAI config -->
           <div class="provider-config" id="config-openai" style="display: none;">
             <div class="form-grid">
               <div class="field full-width">
-                <label>OpenAI API Key</label>
+                <label data-i18n="options.llm.openaiKey">OpenAI API Key</label>
                 <div class="api-key-wrapper">
                   <input type="password" id="openaiKey" placeholder="sk-..." data-llm="openai-key">
                   <button class="toggle-visibility" data-target="openaiKey">👁️</button>
                 </div>
-                <span class="hint">从 <a href="https://platform.openai.com/api-keys" target="_blank" style="color: #60a5fa;">platform.openai.com</a> 获取</span>
+                <span class="hint" data-i18n-html="options.llm.openaiHint">Get from <a href="https://platform.openai.com/api-keys" target="_blank" style="color: #60a5fa;">platform.openai.com</a></span>
               </div>
               <div class="field">
-                <label>模型</label>
+                <label data-i18n="options.llm.modelLabel">Model</label>
                 <select id="openaiModel" data-llm="openai-model">
-                  <option value="gpt-4o-mini">GPT-4o Mini (推荐, 便宜)</option>
-                  <option value="gpt-4o">GPT-4o (更强)</option>
-                  <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                  <option value="gpt-4o-mini" data-i18n="options.llm.gpt4oMini">GPT-4o Mini (Recommended, cheap)</option>
+                  <option value="gpt-4o" data-i18n="options.llm.gpt4o">GPT-4o (More capable)</option>
+                  <option value="gpt-4-turbo" data-i18n="options.llm.gpt4turbo">GPT-4 Turbo</option>
                 </select>
               </div>
             </div>
           </div>
 
           <div class="btn-row">
-            <button class="btn btn-primary" id="testConnection">🔌 测试连接</button>
+            <button class="btn btn-primary" id="testConnection" data-i18n="options.llm.testBtn">🔌 Test Connection</button>
           </div>
           <div class="test-status" id="testStatus"></div>
         </div>
       </div>
     </div>
 
-    <!-- ========== 数据管理 ========== -->
+    <!-- ========== Data ========== -->
     <div class="tab-content" id="tab-data">
       <div class="card">
-        <div class="card-title">📦 导入 / 导出档案</div>
-        <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
-          将你的档案导出为 JSON 文件备份，或从文件导入恢复。
+        <div class="card-title" data-i18n="options.data.title">📦 Import / Export Profile</div>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;" data-i18n="options.data.desc">
+          Export your profile as a JSON backup, or import from file to restore.
         </p>
         <div class="import-export" style="flex-wrap: wrap;">
-          <button class="btn btn-primary" id="exportBtn">📤 导出档案</button>
-          <button class="btn btn-secondary" id="importBtn">📥 导入档案</button>
+          <button class="btn btn-primary" id="exportBtn" data-i18n="options.data.exportBtn">📤 Export Profile</button>
+          <button class="btn btn-secondary" id="importBtn" data-i18n="options.data.importBtn">📥 Import Profile</button>
           <input type="file" id="importFile" accept=".json" style="display: none;">
         </div>
-        <p style="font-size: 11px; color: #64748b; margin-top: 12px; margin-bottom: 8px;">仅常见问答（含自动学习条目与元数据）：</p>
+        <p style="font-size: 11px; color: #64748b; margin-top: 12px; margin-bottom: 8px;" data-i18n="options.data.qaDesc">Q&amp;A only (with auto-learned entries and metadata):</p>
         <div class="import-export" style="flex-wrap: wrap;">
-          <button class="btn btn-secondary" id="exportQaBtn">📤 导出常见问答</button>
-          <button class="btn btn-secondary" id="importQaBtn">📥 导入常见问答</button>
+          <button class="btn btn-secondary" id="exportQaBtn" data-i18n="options.data.exportQaBtn">📤 Export Q&amp;A</button>
+          <button class="btn btn-secondary" id="importQaBtn" data-i18n="options.data.importQaBtn">📥 Import Q&amp;A</button>
           <input type="file" id="importQaFile" accept=".json" style="display: none;">
         </div>
       </div>
 
       <div class="card">
-        <div class="card-title" style="color: #f87171;">⚠️ 危险操作</div>
-        <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
-          清除所有已保存的档案数据。此操作不可撤销。
+        <div class="card-title" style="color: #f87171;" data-i18n="options.data.dangerTitle">⚠️ Danger Zone</div>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;" data-i18n="options.data.dangerDesc">
+          Clear all saved profile data. This action cannot be undone.
         </p>
-        <button class="btn btn-danger" id="resetBtn">🗑️ 重置所有数据</button>
+        <button class="btn btn-danger" id="resetBtn" data-i18n="options.data.resetBtn">🗑️ Reset All Data</button>
       </div>
     </div>
 
   </div>
 
+  <script src="i18n.js"></script>
   <script src="options.js"></script>
 </body>
 </html>

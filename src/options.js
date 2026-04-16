@@ -1,11 +1,30 @@
 /**
- * Apply Pilot - Options 页面逻辑
- * 管理个人档案编辑、LLM 配置、数据导入导出
+ * Apply Pilot - Options page logic
+ * Manages profile editing, LLM config, import/export, and language switching.
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-  // ========== 标签页切换 ==========
+  // ========== Language init ==========
+  await I18n.init();
+  applyLangUI(I18n.currentLang);
+  I18n.apply();
+
+  document.getElementById('langEn').addEventListener('click', () => switchLang('en'));
+  document.getElementById('langZh').addEventListener('click', () => switchLang('zh'));
+
+  async function switchLang(lang) {
+    await I18n.setLang(lang);
+    applyLangUI(lang);
+    I18n.apply();
+  }
+
+  function applyLangUI(lang) {
+    document.getElementById('langEn').classList.toggle('active', lang === 'en');
+    document.getElementById('langZh').classList.toggle('active', lang === 'zh');
+  }
+
+  // ========== Tab switching ==========
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -15,16 +34,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // ========== 加载档案数据 ==========
+  // ========== Load profile data ==========
   const profile = await loadProfileFromStorage();
   populateForm(profile);
   renderLearnedQaItems(profile);
 
-  // ========== 加载 LLM 设置 ==========
+  // ========== Load LLM settings ==========
   const llmSettings = await loadLLMFromStorage();
   populateLLMSettings(llmSettings);
 
-  // ========== 自动保存（档案字段） ==========
+  // ========== Auto-save (profile fields) ==========
   let saveTimer = null;
   function bindDataKeyInput(input) {
     const events = input.tagName === 'SELECT' ? ['change'] : ['input', 'change'];
@@ -37,7 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   document.querySelectorAll('[data-key]').forEach(bindDataKeyInput);
 
-  // ========== Provider 切换 ==========
+  // ========== Provider switching ==========
   document.querySelectorAll('.provider-option').forEach(option => {
     option.addEventListener('click', () => {
       document.querySelectorAll('.provider-option').forEach(o => o.classList.remove('selected'));
@@ -51,14 +70,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // ========== LLM 启用开关 ==========
+  // ========== LLM enable toggle ==========
   document.getElementById('llmEnabled').addEventListener('change', () => {
     const config = document.getElementById('llmConfig');
     config.style.opacity = document.getElementById('llmEnabled').checked ? '1' : '0.5';
     saveLLMData();
   });
 
-  // ========== API Key 显隐切换 ==========
+  // ========== API Key visibility ==========
   document.querySelectorAll('.toggle-visibility').forEach(btn => {
     btn.addEventListener('click', () => {
       const input = document.getElementById(btn.dataset.target);
@@ -72,7 +91,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // ========== LLM 设置自动保存 ==========
+  // ========== LLM auto-save ==========
   document.querySelectorAll('[data-llm]').forEach(input => {
     input.addEventListener('change', saveLLMData);
     input.addEventListener('input', () => {
@@ -81,13 +100,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // ========== 测试连接 ==========
+  // ========== Test connection ==========
   document.getElementById('testConnection').addEventListener('click', testLLMConnection);
 
-  // ========== 添加自定义问答 ==========
+  // ========== Add custom Q&A ==========
   document.getElementById('addQaBtn').addEventListener('click', addCustomQA);
 
-  // ========== 导出 ==========
+  // ========== Export ==========
   document.getElementById('exportBtn').addEventListener('click', exportProfile);
 
   document.getElementById('exportQaBtn').addEventListener('click', exportQaOnly);
@@ -96,16 +115,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   document.getElementById('importQaFile').addEventListener('change', importQaOnly);
 
-  // ========== 导入 ==========
+  // ========== Import ==========
   document.getElementById('importBtn').addEventListener('click', () => {
     document.getElementById('importFile').click();
   });
   document.getElementById('importFile').addEventListener('change', importProfile);
 
-  // ========== 重置 ==========
+  // ========== Reset ==========
   document.getElementById('resetBtn').addEventListener('click', resetAllData);
 
-  // ========== 智能导入 ==========
+  // ========== Smart import ==========
   const smartImportZone = document.getElementById('smartImportZone');
   const smartImportFile = document.getElementById('smartImportFile');
 
@@ -115,7 +134,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     e.target.value = '';
   });
 
-  // 拖拽
   smartImportZone.addEventListener('dragover', (e) => {
     e.preventDefault();
     smartImportZone.classList.add('dragover');
@@ -134,7 +152,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
   // =============================================
-  // 函数实现
+  // Function implementations
   // =============================================
 
   function loadProfileFromStorage() {
@@ -146,7 +164,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   /**
-   * 表单数据覆盖同路径，保留 storage 中表单未包含的键（如 learnedAnswerMeta、未渲染字段）
+   * Deep-merge form data over existing stored data,
+   * preserving keys not present in the form (e.g. learnedAnswerMeta).
    */
   function deepMergeProfile(existing, fromForm) {
     const ex = (existing && typeof existing === 'object')
@@ -180,7 +199,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   /**
-   * 根据 learnedAnswerMeta 渲染「自动学习」问答块（避免与静态/自定义 DOM 重复）
+   * Render auto-learned Q&A entries from learnedAnswerMeta.
    */
   function renderLearnedQaItems(profile) {
     const meta = profile.learnedAnswerMeta;
@@ -199,14 +218,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       const labelEl = document.createElement('label');
       const badge = document.createElement('span');
       badge.className = 'learned-badge';
-      badge.textContent = '自动学习';
+      badge.textContent = I18n.t('options.qa.learnedBadge');
       labelEl.appendChild(badge);
       labelEl.appendChild(document.createTextNode(` ${entry.label || key}`));
 
       const delBtn = document.createElement('button');
       delBtn.type = 'button';
       delBtn.className = 'qa-delete-btn';
-      delBtn.textContent = '删除';
+      delBtn.textContent = I18n.t('options.qa.deleteBtn');
       delBtn.addEventListener('click', () => {
         void removeLearnedAnswer(key, qaItem);
       });
@@ -214,7 +233,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const textarea = document.createElement('textarea');
       textarea.dataset.key = `commonAnswers.${key}`;
-      textarea.placeholder = '你的回答...';
+      textarea.placeholder = I18n.t('options.qa.answerPh');
       textarea.value = (profile.commonAnswers && profile.commonAnswers[key]) || '';
 
       qaItem.appendChild(labelEl);
@@ -225,7 +244,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function removeLearnedAnswer(key, qaItemEl) {
-    if (!confirm('确定删除这条自动学习记录？')) return;
+    if (!confirm(I18n.t('options.alert.deleteQaConfirm'))) return;
     const stored = await loadProfileFromStorage();
     const fromForm = collectFormData();
     const merged = deepMergeProfile(stored, fromForm);
@@ -273,7 +292,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('llmEnabled').checked = settings.enabled;
     document.getElementById('llmConfig').style.opacity = settings.enabled ? '1' : '0.5';
 
-    // Provider selection
     const provider = settings.provider || 'anthropic';
     document.querySelectorAll('.provider-option').forEach(o => {
       o.classList.toggle('selected', o.dataset.provider === provider);
@@ -281,7 +299,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll('.provider-config').forEach(c => c.style.display = 'none');
     document.getElementById(`config-${provider}`).style.display = 'block';
 
-    // Keys and models
     document.getElementById('anthropicKey').value = settings.apiKey || '';
     document.getElementById('anthropicModel').value = settings.model || 'claude-sonnet-4-5-20250514';
     document.getElementById('openaiKey').value = settings.apiKeyOpenAI || '';
@@ -326,26 +343,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function saveLLMData() {
     const llmData = collectLLMData();
-
-    // 同时以旧格式保存（content script 需要）
-    const forContentScript = {
-      enabled: llmData.enabled,
-      provider: llmData.provider,
-      apiKey: llmData.provider === 'anthropic' ? llmData.apiKey : llmData.apiKeyOpenAI,
-      model: llmData.provider === 'anthropic' ? llmData.model : llmData.modelOpenAI,
-    };
-
-    chrome.storage.local.set({
-      applyPilotLLM: llmData,
-    }, showSaveIndicator);
+    chrome.storage.local.set({ applyPilotLLM: llmData }, showSaveIndicator);
   }
 
   function showSaveIndicator() {
     const indicator = document.getElementById('saveIndicator');
-    indicator.textContent = '✓ 已保存';
+    indicator.textContent = I18n.t('options.saved');
     indicator.classList.add('saved');
     setTimeout(() => {
-      indicator.textContent = '所有更改自动保存';
+      indicator.textContent = I18n.t('options.saveAuto');
       indicator.classList.remove('saved');
     }, 2000);
   }
@@ -353,7 +359,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function testLLMConnection() {
     const statusEl = document.getElementById('testStatus');
     statusEl.className = 'test-status loading';
-    statusEl.textContent = '⏳ 正在测试连接...';
+    statusEl.textContent = I18n.t('options.llm.testing');
 
     const llm = collectLLMData();
     const provider = llm.provider;
@@ -362,7 +368,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!apiKey) {
       statusEl.className = 'test-status error';
-      statusEl.textContent = '❌ 请先输入 API Key';
+      statusEl.textContent = I18n.t('options.llm.noApiKey');
       return;
     }
 
@@ -400,15 +406,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (response.ok) {
         statusEl.className = 'test-status success';
-        statusEl.textContent = `✅ 连接成功！(${provider === 'anthropic' ? 'Claude' : 'OpenAI'} - ${model})`;
+        statusEl.textContent = I18n.t('options.llm.testSuccess', {
+          provider: provider === 'anthropic' ? 'Claude' : 'OpenAI',
+          model,
+        });
       } else {
         const err = await response.json().catch(() => ({}));
         statusEl.className = 'test-status error';
-        statusEl.textContent = `❌ API 错误 ${response.status}: ${err.error?.message || '未知错误'}`;
+        statusEl.textContent = I18n.t('options.llm.testError', {
+          status: response.status,
+          msg: err.error?.message || '?',
+        });
       }
     } catch (e) {
       statusEl.className = 'test-status error';
-      statusEl.textContent = `❌ 网络错误: ${e.message}`;
+      statusEl.textContent = I18n.t('options.llm.networkError', { msg: e.message });
     }
   }
 
@@ -417,23 +429,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     const key = keyInput.value.trim();
     if (!key) return;
 
-    // 验证 key 格式
     if (!/^[a-zA-Z][a-zA-Z0-9]*$/.test(key)) {
-      alert('标签只能包含英文字母和数字，且以字母开头');
+      alert(I18n.t('options.alert.invalidQaKey'));
       return;
     }
 
     const container = document.getElementById('qaContainer');
     const qaItem = document.createElement('div');
     qaItem.className = 'qa-item';
-    qaItem.innerHTML = `
-      <label>${key} <button style="float: right; background: none; border: none; color: #f87171; cursor: pointer; font-size: 12px;" onclick="this.closest('.qa-item').remove(); document.dispatchEvent(new Event('qa-changed'));">删除</button></label>
-      <textarea data-key="commonAnswers.${key}" placeholder="你的回答..."></textarea>
-    `;
+
+    const labelEl = document.createElement('label');
+    labelEl.textContent = key + ' ';
+
+    const delBtn = document.createElement('button');
+    delBtn.style.cssText = 'float: right; background: none; border: none; color: #f87171; cursor: pointer; font-size: 12px;';
+    delBtn.textContent = I18n.t('options.qa.deleteBtn');
+    delBtn.addEventListener('click', () => {
+      qaItem.remove();
+      document.dispatchEvent(new Event('qa-changed'));
+    });
+    labelEl.appendChild(delBtn);
+
+    const textarea = document.createElement('textarea');
+    textarea.dataset.key = `commonAnswers.${key}`;
+    textarea.placeholder = I18n.t('options.qa.answerPh');
+
+    qaItem.appendChild(labelEl);
+    qaItem.appendChild(textarea);
     container.appendChild(qaItem);
     keyInput.value = '';
 
-    bindDataKeyInput(qaItem.querySelector('textarea'));
+    bindDataKeyInput(textarea);
   }
 
   function exportProfile() {
@@ -493,7 +519,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       try {
         const data = JSON.parse(evt.target.result);
         if (!data.commonAnswers || typeof data.commonAnswers !== 'object') {
-          alert('无效的常见问答文件（缺少 commonAnswers）');
+          alert(I18n.t('options.alert.invalidQaFile'));
           return;
         }
         loadProfileFromStorage().then((stored) => {
@@ -509,11 +535,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             populateForm(merged);
             renderLearnedQaItems(merged);
             showSaveIndicator();
-            alert('常见问答已导入并合并。');
+            alert(I18n.t('options.alert.qaImported'));
           });
         });
       } catch (err) {
-        alert('文件解析失败: ' + err.message);
+        alert(I18n.t('options.alert.parseFailed', { msg: err.message }));
       }
     };
     reader.readAsText(file);
@@ -534,22 +560,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             populateForm(data.profile);
             renderLearnedQaItems(data.profile);
             showSaveIndicator();
-            alert('档案导入成功！');
+            alert(I18n.t('options.alert.profileImported'));
           });
         } else {
-          alert('无效的档案文件格式');
+          alert(I18n.t('options.alert.invalidProfileFile'));
         }
       } catch (err) {
-        alert('文件解析失败: ' + err.message);
+        alert(I18n.t('options.alert.parseFailed', { msg: err.message }));
       }
     };
     reader.readAsText(file);
-    e.target.value = ''; // 允许重复导入同一文件
+    e.target.value = '';
   }
 
   function resetAllData() {
-    if (!confirm('确定要清除所有数据吗？此操作不可撤销！')) return;
-    if (!confirm('再次确认：所有个人档案和设置都将被删除。')) return;
+    if (!confirm(I18n.t('options.alert.resetConfirm1'))) return;
+    if (!confirm(I18n.t('options.alert.resetConfirm2'))) return;
 
     chrome.storage.local.remove(['applyPilotProfile', 'applyPilotLLM'], () => {
       location.reload();
@@ -558,38 +584,35 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
   // =============================================
-  // 智能导入：上传文件 → 提取文本 → LLM 解析 → 填充档案
+  // Smart import: upload → extract text → LLM → fill profile
   // =============================================
 
-  let pendingImportProfile = null; // 暂存 AI 提取的结果，等用户确认
+  let pendingImportProfile = null;
 
   async function handleSmartImport(file) {
-    // 检查 LLM 是否配置
     const llm = collectLLMData();
     const apiKey = llm.provider === 'anthropic' ? llm.apiKey : llm.apiKeyOpenAI;
     if (!apiKey) {
-      alert('请先在「AI 设置」标签页中配置 API Key，智能导入需要 AI 来提取信息。');
+      alert(I18n.t('options.alert.noApiKey'));
       return;
     }
 
-    const progressEl = document.getElementById('importProgress');
+    const progressEl  = document.getElementById('importProgress');
     const progressFill = document.getElementById('progressFill');
     const progressText = document.getElementById('progressText');
-    const previewEl = document.getElementById('importPreview');
+    const previewEl   = document.getElementById('importPreview');
 
-    // 重置状态
     previewEl.classList.remove('active');
     progressEl.classList.add('active');
     progressFill.style.width = '10%';
-    progressText.textContent = `正在读取 ${file.name}...`;
+    progressText.textContent = I18n.t('options.smartImport.readingFile', { filename: file.name });
 
     try {
-      // Step 1: 读取文件
       const ext = file.name.split('.').pop().toLowerCase();
-      let fileData = null; // { type: 'text', content } 或 { type: 'pdf', base64 }
+      let fileData = null;
 
       if (ext === 'pdf') {
-        progressText.textContent = '正在读取 PDF...';
+        progressText.textContent = I18n.t('options.smartImport.readingPdf');
         progressFill.style.width = '20%';
         const arrayBuffer = await file.arrayBuffer();
         const base64 = btoa(
@@ -597,24 +620,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         );
         fileData = { type: 'pdf', base64 };
       } else {
-        // md, txt, markdown
         const text = await file.text();
         if (!text || text.trim().length < 20) {
-          throw new Error('文件内容太少，无法提取有效信息');
+          throw new Error(I18n.t('options.alert.fileContentTooShort'));
         }
         fileData = { type: 'text', content: text };
       }
 
-      // Step 2: 调 LLM 提取
-      progressText.textContent = '正在用 AI 提取个人信息...';
+      progressText.textContent = I18n.t('options.smartImport.extracting');
       progressFill.style.width = '50%';
 
       const extracted = await callLLMForExtraction(fileData, llm);
 
       progressFill.style.width = '90%';
-      progressText.textContent = '提取完成，正在生成预览...';
+      progressText.textContent = I18n.t('options.smartImport.generating');
 
-      // Step 3: 显示预览
       pendingImportProfile = extracted;
       showImportPreview(extracted);
 
@@ -623,19 +643,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (err) {
       progressEl.classList.remove('active');
-      alert('智能导入失败: ' + err.message);
+      alert(I18n.t('options.alert.smartImportFailed', { msg: err.message }));
       console.error('[Apply Pilot] Smart import error:', err);
     }
   }
 
-  /**
-   * 调用 LLM 从文件中提取结构化档案数据
-   * @param {Object} fileData - { type: 'text'|'pdf', content?, base64? }
-   */
   async function callLLMForExtraction(fileData, llmSettings) {
     const provider = llmSettings.provider;
     const apiKey = provider === 'anthropic' ? llmSettings.apiKey : llmSettings.apiKeyOpenAI;
-    const model = provider === 'anthropic' ? llmSettings.model : llmSettings.modelOpenAI;
+    const model  = provider === 'anthropic' ? llmSettings.model  : llmSettings.modelOpenAI;
 
     const extractionPrompt = `You are a structured data extractor. Read the attached document (a resume / CV / personal profile) and extract as much information as possible into a JSON object.
 
@@ -713,27 +729,18 @@ Respond with ONLY the JSON object, no other text.`;
     let responseText;
 
     if (provider === 'anthropic') {
-      // Claude API 原生支持 PDF 文档，直接发 base64
       const contentBlocks = [];
 
       if (fileData.type === 'pdf') {
         contentBlocks.push({
           type: 'document',
-          source: {
-            type: 'base64',
-            media_type: 'application/pdf',
-            data: fileData.base64,
-          },
+          source: { type: 'base64', media_type: 'application/pdf', data: fileData.base64 },
         });
       } else {
-        // 文本文件：截断后作为文本发送
         const truncated = fileData.content.length > 15000
           ? fileData.content.slice(0, 15000) + '\n...[truncated]'
           : fileData.content;
-        contentBlocks.push({
-          type: 'text',
-          text: 'DOCUMENT:\n' + truncated,
-        });
+        contentBlocks.push({ type: 'text', text: 'DOCUMENT:\n' + truncated });
       }
 
       contentBlocks.push({ type: 'text', text: extractionPrompt });
@@ -747,22 +754,25 @@ Respond with ONLY the JSON object, no other text.`;
           'anthropic-dangerous-direct-browser-access': 'true',
         },
         body: JSON.stringify({
-          model: model,
+          model,
           max_tokens: 2048,
           messages: [{ role: 'user', content: contentBlocks }],
         }),
       });
+
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({}));
-        throw new Error(`Anthropic API 错误 ${resp.status}: ${err.error?.message || '未知'}`);
+        throw new Error(I18n.t('options.alert.anthropicApiError', {
+          status: resp.status,
+          msg: err.error?.message || '?',
+        }));
       }
       const data = await resp.json();
       responseText = data.content[0].text;
 
     } else {
-      // OpenAI：只支持文本，PDF 需提示用户换 Anthropic
       if (fileData.type === 'pdf') {
-        throw new Error('OpenAI 不支持直接读取 PDF。请在「AI 设置」中切换到 Anthropic (Claude) 后重试，或上传 Markdown/TXT 格式。');
+        throw new Error(I18n.t('options.alert.openaiNoPdf'));
       }
 
       const truncated = fileData.content.length > 15000
@@ -776,67 +786,87 @@ Respond with ONLY the JSON object, no other text.`;
           'Authorization': `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: model,
-          messages: [{
-            role: 'user',
-            content: extractionPrompt + '\n\nDOCUMENT:\n' + truncated,
-          }],
+          model,
+          messages: [{ role: 'user', content: extractionPrompt + '\n\nDOCUMENT:\n' + truncated }],
           max_tokens: 2048,
         }),
       });
+
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({}));
-        throw new Error(`OpenAI API 错误 ${resp.status}: ${err.error?.message || '未知'}`);
+        throw new Error(I18n.t('options.alert.openaiApiError', {
+          status: resp.status,
+          msg: err.error?.message || '?',
+        }));
       }
       const data = await resp.json();
       responseText = data.choices[0].message.content;
     }
 
-    // 解析 JSON
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      throw new Error('AI 返回的格式无法解析，请重试');
+      throw new Error('AI returned unparseable format, please retry');
     }
     return JSON.parse(jsonMatch[0]);
   }
 
   /**
-   * 显示提取结果预览
+   * Show extracted profile preview.
+   * Label keys are i18n-aware.
    */
   function showImportPreview(profile) {
     const grid = document.getElementById('previewGrid');
     grid.innerHTML = '';
 
-    const labels = {
-      'personal.firstName': '名', 'personal.lastName': '姓', 'personal.fullName': '全名',
-      'personal.email': '邮箱', 'personal.phone': '电话', 'personal.dateOfBirth': '出生日期',
-      'personal.gender': '性别', 'personal.nationality': '国籍', 'personal.currentLocation': '所在地',
-      'address.street': '街道', 'address.city': '城市', 'address.state': '州/省',
-      'address.postalCode': '邮编', 'address.country': '国家',
-      'links.linkedin': 'LinkedIn', 'links.github': 'GitHub', 'links.portfolio': '作品集',
-      'links.website': '网站', 'links.twitter': 'Twitter',
-      'work.currentTitle': '当前职位', 'work.currentCompany': '当前公司',
-      'work.yearsOfExperience': '工作年限', 'work.noticePeriod': '通知期',
-      'work.salaryExpectation': '期望薪资', 'work.willingToRelocate': '愿意搬迁',
-      'work.workAuthorization': '工作许可', 'work.visaSponsorship': '签证担保',
-      'work.startDate': '最早入职',
-      'education.highestDegree': '学历', 'education.university': '学校',
-      'education.major': '专业', 'education.graduationYear': '毕业年份',
-      'skills.languages': '语言能力', 'skills.technical': '技术技能',
-      'skills.certifications': '证书',
-      'commonAnswers.selfIntroduction': '自我介绍',
+    // Maps data key path → i18n key for the label
+    const labelKeys = {
+      'personal.firstName':   'options.preview.firstName',
+      'personal.lastName':    'options.preview.lastName',
+      'personal.fullName':    'options.preview.fullName',
+      'personal.email':       'options.preview.email',
+      'personal.phone':       'options.preview.phone',
+      'personal.dateOfBirth': 'options.preview.dob',
+      'personal.gender':      'options.preview.gender',
+      'personal.nationality': 'options.preview.nationality',
+      'personal.currentLocation': 'options.preview.location',
+      'address.street':       'options.preview.street',
+      'address.city':         'options.preview.city',
+      'address.state':        'options.preview.state',
+      'address.postalCode':   'options.preview.postal',
+      'address.country':      'options.preview.country',
+      'links.linkedin':       'options.preview.linkedin',
+      'links.github':         'options.preview.github',
+      'links.portfolio':      'options.preview.portfolio',
+      'links.website':        'options.preview.website',
+      'links.twitter':        'options.preview.twitter',
+      'work.currentTitle':        'options.preview.currentTitle',
+      'work.currentCompany':      'options.preview.currentCompany',
+      'work.yearsOfExperience':   'options.preview.yearsExp',
+      'work.noticePeriod':        'options.preview.noticePeriod',
+      'work.salaryExpectation':   'options.preview.salary',
+      'work.willingToRelocate':   'options.preview.relocate',
+      'work.workAuthorization':   'options.preview.workAuth',
+      'work.visaSponsorship':     'options.preview.visaSponsorship',
+      'work.startDate':           'options.preview.startDate',
+      'education.highestDegree':  'options.preview.degree',
+      'education.university':     'options.preview.university',
+      'education.major':          'options.preview.major',
+      'education.graduationYear': 'options.preview.gradYear',
+      'skills.languages':         'options.preview.langSkills',
+      'skills.technical':         'options.preview.techSkills',
+      'skills.certifications':    'options.preview.certifications',
+      'commonAnswers.selfIntroduction': 'options.preview.selfIntro',
     };
 
-    // 展平 profile
     const flat = flattenObj(profile);
 
-    for (const [key, label] of Object.entries(labels)) {
+    for (const [key, labelKey] of Object.entries(labelKeys)) {
       const value = flat[key] || '';
       const item = document.createElement('div');
       item.className = `preview-item${value ? '' : ' empty'}`;
       item.innerHTML = `
-        <div class="preview-label">${label}</div>
-        <div class="preview-value">${value || '（未提取到）'}</div>
+        <div class="preview-label">${I18n.t(labelKey)}</div>
+        <div class="preview-value">${value || I18n.t('options.preview.notExtracted')}</div>
       `;
       grid.appendChild(item);
     }
@@ -844,9 +874,6 @@ Respond with ONLY the JSON object, no other text.`;
     document.getElementById('importPreview').classList.add('active');
   }
 
-  /**
-   * 展平嵌套对象
-   */
   function flattenObj(obj, prefix = '') {
     const result = {};
     for (const [key, value] of Object.entries(obj)) {
@@ -860,15 +887,12 @@ Respond with ONLY the JSON object, no other text.`;
     return result;
   }
 
-  /**
-   * 用户确认 → 写入档案
-   */
   function applySmartImport() {
     if (!pendingImportProfile) return;
 
     loadProfileFromStorage().then((stored) => {
       const fromForm = collectFormData();
-      const base = deepMergeProfile(stored, fromForm);
+      const base   = deepMergeProfile(stored, fromForm);
       const merged = deepMerge(base, pendingImportProfile);
 
       chrome.storage.local.set({ applyPilotProfile: merged }, () => {
@@ -878,13 +902,13 @@ Respond with ONLY the JSON object, no other text.`;
         showSaveIndicator();
         document.getElementById('importPreview').classList.remove('active');
         pendingImportProfile = null;
-        alert('档案已更新！你可以在下方各字段中检查和微调。');
+        alert(I18n.t('options.alert.importApplied'));
       });
     });
   }
 
   /**
-   * 深度合并：只覆盖空字段，不冲掉用户已有数据
+   * Deep merge: only overwrite empty fields, preserving existing user data.
    */
   function deepMerge(existing, incoming) {
     const result = JSON.parse(JSON.stringify(existing));
@@ -892,7 +916,6 @@ Respond with ONLY the JSON object, no other text.`;
       if (value && typeof value === 'object' && !Array.isArray(value)) {
         result[key] = deepMerge(result[key] || {}, value);
       } else if (value && String(value).trim()) {
-        // 只在现有值为空时覆盖
         if (!result[key] || !String(result[key]).trim()) {
           result[key] = value;
         }
@@ -901,9 +924,6 @@ Respond with ONLY the JSON object, no other text.`;
     return result;
   }
 
-  /**
-   * 取消导入
-   */
   function cancelSmartImport() {
     pendingImportProfile = null;
     document.getElementById('importPreview').classList.remove('active');
