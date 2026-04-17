@@ -1,0 +1,16 @@
+{
+  "name": "apply-pilot",
+  "version": "1.1.3",
+  "description": "Smart job application form auto-filler with AI semantic matching",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js",
+    "pack": "node scripts/build.js --pack",
+    "release:patch": "node scripts/release.js patch",
+    "release:minor": "node scripts/release.js minor",
+    "release:major": "node scripts/release.js major"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}

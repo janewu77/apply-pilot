@@ -8,11 +8,12 @@
   if (window.__applyPilotInjected) return;
   window.__applyPilotInjected = true;
 
-  /** 受控组件风险：界面有字但提交仍可能判空 — 需在 UI 中反复提醒用户自检 */
-  const FRAMEWORK_VERIFY_HINT_SHORT =
-    '部分招聘站用 React / Vue 等：框里看得见字，不等于已通过网站校验。提交前请在重要栏位里点一下或 Tab 离开，确认没有红字报错。';
-  const FRAMEWORK_VERIFY_HINT_TOAST =
-    '若点「提交」仍提示缺内容：在对应栏位内点击聚焦，或删一个字再输回，强制网站接受你的输入。';
+  // 初始化 i18n（异步加载用户语言偏好；默认 en，用户触发操作前已完成）
+  I18n.init();
+
+  /** 受控组件风险提示 — 通过 i18n 获取，延迟求值避免初始化时序问题 */
+  const FRAMEWORK_VERIFY_HINT_SHORT = () => I18n.t('content.hint.frameworkShort');
+  const FRAMEWORK_VERIFY_HINT_TOAST = () => I18n.t('content.hint.frameworkToast');
 
   // ========== 状态 ==========
   let overlayVisible = false;
@@ -27,7 +28,7 @@
   async function scanAndFill(options = { useLLM: true, autoFill: false }) {
     const profileData = await getFilledFields();
     if (Object.keys(profileData).length === 0) {
-      showNotification('请先在设置中填写你的个人档案', 'warning');
+      showNotification(I18n.t('content.notif.noProfile'), 'warning');
       return;
     }
 
@@ -36,11 +37,11 @@
 
     const fields = scanFormFields();
     if (fields.length === 0) {
-      showNotification('当前页面没有检测到表单字段', 'info');
+      showNotification(I18n.t('content.notif.noFields'), 'info');
       return;
     }
 
-    showNotification(`检测到 ${fields.length} 个表单字段，正在匹配...`, 'info');
+    showNotification(I18n.t('content.notif.fieldsDetected', { count: fields.length }), 'info');
 
     matchResults = [];
     let unmatchedForLLM = [];
@@ -97,7 +98,7 @@
 
     // 第三轮：LLM 匹配（如果启用）
     if (options.useLLM && unmatchedForLLM.length > 0) {
-      showNotification('正在用 AI 分析剩余字段...', 'info');
+      showNotification(I18n.t('content.notif.aiAnalyzing'), 'info');
       const llmMapping = await llmMatchFields(
         unmatchedForLLM.map(f => ({
           clues: f.clues,
@@ -122,7 +123,7 @@
     const matched = matchResults.filter(r => r.value);
     const unmatched = matchResults.filter(r => !r.value);
     showNotification(
-      `匹配完成: ${matched.length} 个可填充, ${unmatched.length} 个需手动处理`,
+      I18n.t('content.notif.matchDone', { matched: matched.length, unmatched: unmatched.length }),
       matched.length > 0 ? 'success' : 'warning'
     );
 
@@ -149,7 +150,7 @@
     });
     if (count > 0) {
       showNotification(
-        `已自动填充 ${count} 个高置信度字段\n\n⚠ ${FRAMEWORK_VERIFY_HINT_TOAST}`,
+        I18n.t('content.notif.filledHigh', { count, hint: FRAMEWORK_VERIFY_HINT_TOAST() }),
         'success',
         9000
       );
@@ -170,7 +171,7 @@
     });
     if (count > 0) {
       showNotification(
-        `已填充 ${count} 个字段\n\n⚠ ${FRAMEWORK_VERIFY_HINT_TOAST}`,
+        I18n.t('content.notif.filledAll', { count, hint: FRAMEWORK_VERIFY_HINT_TOAST() }),
         'success',
         9000
       );
@@ -253,7 +254,7 @@
       }
     } else if (type === 'file') {
       // 文件上传无法程序化设置，标记提醒用户
-      highlightElement(element, '请手动上传文件');
+      highlightElement(element, I18n.t('content.notif.fileUpload'));
       return;
     } else {
       // 文本类输入：原生 setter + InputEvent，便于受控组件更新 state
@@ -416,31 +417,29 @@
   async function saveManualAnswersToProfile() {
     const entries = collectManualAnswersToLearn();
     if (!entries.length) {
-      showNotification('没有在未匹配栏位中检测到填写内容', 'info');
+      showNotification(I18n.t('content.notif.noLearnContent'), 'info');
       return;
     }
     const saved = await persistLearnedEntries(entries);
     if (!saved) {
-      showNotification('没有可保存的回答（空白或未选择选项不会收集）', 'info');
+      showNotification(I18n.t('content.qa.nothingToSave'), 'info');
       return;
     }
     await updateMatchResultsAfterLearn();
     removeOverlay();
     showOverlay();
-    showNotification(`已将 ${saved} 条存入预设回答（常见问答）`, 'success');
+    showNotification(I18n.t('content.qa.savedNotif', { count: saved }), 'success');
   }
 
   async function onCloseClick() {
     const entries = collectManualAnswersToLearn();
     if (entries.length > 0) {
-      const ok = confirm(
-        '检测到未匹配栏位中已有填写内容。是否将这些内容存入「常见问答」预设，供下次自动匹配？\n\n点「取消」则直接关闭，不保存。'
-      );
+      const ok = confirm(I18n.t('content.qa.learnPrompt'));
       if (ok) {
         const saved = await persistLearnedEntries(entries);
         if (saved > 0) {
           await updateMatchResultsAfterLearn();
-          showNotification(`已保存 ${saved} 条到预设回答`, 'success');
+          showNotification(I18n.t('content.qa.savedToPreset', { count: saved }), 'success');
         }
       }
     }
@@ -468,21 +467,20 @@
         badge.classList.add(result.filled ? 'filled' : 'matched');
         badge.textContent = result.filled ? '✓' : `→ ${result.profileKey?.split('.').pop()}`;
         badge.title =
-          `将填入: ${result.value}\n来源: ${result.source}\n置信度: ${result.confidence}\n点击填充\n\n` +
-          `提示：${FRAMEWORK_VERIFY_HINT_TOAST}`;
+          I18n.t('content.badge.willFill', { value: result.value, source: result.source, confidence: result.confidence }) +
+          FRAMEWORK_VERIFY_HINT_TOAST();
         badge.addEventListener('click', () => {
           fillField(result.element, result.value);
           result.filled = true;
           badge.classList.remove('matched');
           badge.classList.add('filled');
           badge.textContent = '✓';
-          badge.title =
-            `已尝试填入。${FRAMEWORK_VERIFY_HINT_TOAST}\n\n若提交报错，请在该栏位内再点一下或稍作编辑。`;
+          badge.title = I18n.t('content.notif.tryFilled', { hint: FRAMEWORK_VERIFY_HINT_TOAST() });
         });
       } else {
         badge.classList.add('unmatched');
         badge.textContent = '?';
-        badge.title = `未能匹配\n线索: ${(result.clues || []).join(', ')}`;
+        badge.title = I18n.t('content.badge.unmatched', { clues: (result.clues || []).join(', ') });
       }
 
       // 定位到字段旁边
@@ -506,13 +504,13 @@
         <div class="apply-pilot-bar-title">🚀 Apply Pilot</div>
         <div class="apply-pilot-bar-stats"></div>
         <div class="apply-pilot-bar-buttons">
-          <button id="ap-fill-high">填充高置信度</button>
-          <button id="ap-fill-all">填充全部匹配</button>
-          <button id="ap-save-learned" title="把当前在未匹配栏位中填写的内容写入档案">存入预设回答</button>
-          <button id="ap-close">关闭</button>
+          <button id="ap-fill-high">${I18n.t('content.bar.fillHigh')}</button>
+          <button id="ap-fill-all">${I18n.t('content.bar.fillAll')}</button>
+          <button id="ap-save-learned" title="${I18n.t('content.bar.saveLearnedTitle')}">${I18n.t('content.bar.saveLearned')}</button>
+          <button id="ap-close">${I18n.t('content.bar.close')}</button>
         </div>
       </div>
-      <div class="apply-pilot-bar-hint" role="status">${FRAMEWORK_VERIFY_HINT_SHORT}</div>
+      <div class="apply-pilot-bar-hint" role="status">${FRAMEWORK_VERIFY_HINT_SHORT()}</div>
     `;
     document.body.appendChild(bar);
 
@@ -541,7 +539,7 @@
     const total = matchResults.length;
     const matched = matchResults.filter(r => r.value).length;
     const filled = matchResults.filter(r => r.filled).length;
-    statsEl.textContent = `共 ${total} 字段 | 已匹配 ${matched} | 已填充 ${filled}`;
+    statsEl.textContent = I18n.t('content.notif.statsBar', { total, matched, filled });
   }
 
   function updateOverlay() {
@@ -552,8 +550,7 @@
         badge.classList.remove('matched');
         badge.classList.add('filled');
         badge.textContent = '✓';
-        badge.title =
-          `已尝试填入。${FRAMEWORK_VERIFY_HINT_TOAST}\n\n若提交报错，请在该栏位内再点一下或稍作编辑。`;
+        badge.title = I18n.t('content.notif.tryFilled', { hint: FRAMEWORK_VERIFY_HINT_TOAST() });
       }
     });
   }

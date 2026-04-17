@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Apply Pilot",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Smart job application form auto-filler with AI semantic matching and auto-learning. Supports English, German, and Chinese forms.",
   "permissions": [
     "storage",
@@ -25,9 +25,19 @@
   "options_page": "options.html",
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["profile.js", "matcher.js", "llm.js", "content.js"],
-      "css": ["styles/overlay.css"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "i18n.js",
+        "profile.js",
+        "matcher.js",
+        "llm.js",
+        "content.js"
+      ],
+      "css": [
+        "styles/overlay.css"
+      ],
       "run_at": "document_idle"
     }
   ],

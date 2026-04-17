@@ -12,12 +12,14 @@
 # Logs
 *.log
 
-# Build output (if added later)
+# Build output
 dist/
 build/
+releases/
 
-# Node (if added later)
+# Node
 node_modules/
+package-lock.json
 
 
 tmp/

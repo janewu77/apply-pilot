@@ -222,6 +222,32 @@ const TRANSLATIONS = {
     'options.preview.certifications':  'Certifications',
     'options.preview.selfIntro':       'Self Introduction',
     'options.preview.notExtracted':    '(Not found)',
+
+    // ── Content Script ─────────────────────────────────────
+    'content.hint.frameworkShort':  'Some job sites use React / Vue etc.: visible text in the field does not mean the site has accepted it. Before submitting, click or Tab through important fields to confirm there are no validation errors.',
+    'content.hint.frameworkToast':  'If clicking "Submit" still shows missing fields: click the field to focus it, or delete and retype a character to force the site to accept your input.',
+    'content.notif.noProfile':      'Please fill in your profile in Settings first',
+    'content.notif.noFields':       'No form fields detected on this page',
+    'content.notif.fieldsDetected': 'Detected {count} form field(s), matching...',
+    'content.notif.aiAnalyzing':    'Using AI to analyze remaining fields...',
+    'content.notif.matchDone':      'Matching complete: {matched} fillable, {unmatched} need manual input',
+    'content.notif.filledHigh':     'Auto-filled {count} high-confidence field(s)\n\n⚠ {hint}',
+    'content.notif.filledAll':      'Filled {count} field(s)\n\n⚠ {hint}',
+    'content.notif.statsBar':       '{total} fields | {matched} matched | {filled} filled',
+    'content.notif.tryFilled':      'Fill attempted. {hint}\n\nIf the site still shows an error, click the field and make a small edit.',
+    'content.qa.nothingToSave':     'No answers to save (blank fields or unselected options are not collected)',
+    'content.qa.savedNotif':        'Saved {count} answer(s) to Q&A presets',
+    'content.qa.learnPrompt':       'Unfilled fields have been manually filled in. Save these to Q&A presets for auto-matching next time?\n\nClick "Cancel" to close without saving.',
+    'content.qa.savedToPreset':     'Saved {count} answer(s) to presets',
+    'content.bar.fillHigh':         'Fill High Confidence',
+    'content.bar.fillAll':          'Fill All Matched',
+    'content.bar.saveLearned':      'Save as preset answer',
+    'content.bar.saveLearnedTitle': 'Save content filled in unmatched fields as preset answers',
+    'content.bar.close':            'Close',
+    'content.notif.fileUpload':     'Please upload the file manually',
+    'content.notif.noLearnContent': 'No user-filled content found in unmatched fields',
+    'content.badge.willFill':       'Will fill: {value}\nSource: {source}\nConfidence: {confidence}\nClick to fill\n\n',
+    'content.badge.unmatched':      'Unmatched\nClues: {clues}',
   },
 
   zh: {
@@ -442,6 +468,32 @@ const TRANSLATIONS = {
     'options.preview.certifications':  '证书',
     'options.preview.selfIntro':       '自我介绍',
     'options.preview.notExtracted':    '（未提取到）',
+
+    // ── Content Script ─────────────────────────────────────
+    'content.hint.frameworkShort':  '部分招聘站用 React / Vue 等：框里看得见字，不等于已通过网站校验。提交前请在重要栏位里点一下或 Tab 离开，确认没有红字报错。',
+    'content.hint.frameworkToast':  '若点「提交」仍提示缺内容：在对应栏位内点击聚焦，或删一个字再输回，强制网站接受你的输入。',
+    'content.notif.noProfile':      '请先在设置中填写你的个人档案',
+    'content.notif.noFields':       '当前页面没有检测到表单字段',
+    'content.notif.fieldsDetected': '检测到 {count} 个表单字段，正在匹配...',
+    'content.notif.aiAnalyzing':    '正在用 AI 分析剩余字段...',
+    'content.notif.matchDone':      '匹配完成: {matched} 个可填充, {unmatched} 个需手动处理',
+    'content.notif.filledHigh':     '已自动填充 {count} 个高置信度字段\n\n⚠ {hint}',
+    'content.notif.filledAll':      '已填充 {count} 个字段\n\n⚠ {hint}',
+    'content.notif.statsBar':       '共 {total} 字段 | 已匹配 {matched} | 已填充 {filled}',
+    'content.notif.tryFilled':      '已尝试填入。{hint}\n\n若提交报错，请在该栏位内再点一下或稍作编辑。',
+    'content.qa.nothingToSave':     '没有可保存的回答（空白或未选择选项不会收集）',
+    'content.qa.savedNotif':        '已将 {count} 条存入预设回答（常见问答）',
+    'content.qa.learnPrompt':       '检测到未匹配栏位中已有填写内容。是否将这些内容存入「常见问答」预设，供下次自动匹配？\n\n点「取消」则直接关闭，不保存。',
+    'content.qa.savedToPreset':     '已保存 {count} 条到预设回答',
+    'content.bar.fillHigh':         '填充高置信度',
+    'content.bar.fillAll':          '填充全部匹配',
+    'content.bar.saveLearned':      '存入预设回答',
+    'content.bar.saveLearnedTitle': '把当前在未匹配栏位中填写的内容写入档案',
+    'content.bar.close':            '关闭',
+    'content.notif.fileUpload':     '请手动上传文件',
+    'content.notif.noLearnContent': '没有在未匹配栏位中检测到填写内容',
+    'content.badge.willFill':       '将填入: {value}\n来源: {source}\n置信度: {confidence}\n点击填充\n\n',
+    'content.badge.unmatched':      '未能匹配\n线索: {clues}',
   },
 };
 
@@ -503,7 +555,8 @@ const I18n = {
     document.querySelectorAll('[data-i18n-ph]').forEach(el => {
       el.placeholder = this.t(el.dataset.i18nPh);
     });
-    document.documentElement.lang = this.currentLang === 'zh' ? 'zh-CN' : 'en';
+    const htmlLang = this.currentLang === 'zh' ? 'zh-CN' : 'en';
+    document.documentElement.lang = htmlLang;
   },
 };
 

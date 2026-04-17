@@ -218,6 +218,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const labelEl = document.createElement('label');
       const badge = document.createElement('span');
       badge.className = 'learned-badge';
+      badge.dataset.i18n = 'options.qa.learnedBadge';
       badge.textContent = I18n.t('options.qa.learnedBadge');
       labelEl.appendChild(badge);
       labelEl.appendChild(document.createTextNode(` ${entry.label || key}`));
@@ -225,6 +226,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const delBtn = document.createElement('button');
       delBtn.type = 'button';
       delBtn.className = 'qa-delete-btn';
+      delBtn.dataset.i18n = 'options.qa.deleteBtn';
       delBtn.textContent = I18n.t('options.qa.deleteBtn');
       delBtn.addEventListener('click', () => {
         void removeLearnedAnswer(key, qaItem);
@@ -233,6 +235,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const textarea = document.createElement('textarea');
       textarea.dataset.key = `commonAnswers.${key}`;
+      textarea.dataset.i18nPh = 'options.qa.answerPh';
       textarea.placeholder = I18n.t('options.qa.answerPh');
       textarea.value = (profile.commonAnswers && profile.commonAnswers[key]) || '';
 
@@ -443,6 +446,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const delBtn = document.createElement('button');
     delBtn.style.cssText = 'float: right; background: none; border: none; color: #f87171; cursor: pointer; font-size: 12px;';
+    delBtn.dataset.i18n = 'options.qa.deleteBtn';
     delBtn.textContent = I18n.t('options.qa.deleteBtn');
     delBtn.addEventListener('click', () => {
       qaItem.remove();
@@ -452,6 +456,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const textarea = document.createElement('textarea');
     textarea.dataset.key = `commonAnswers.${key}`;
+    textarea.dataset.i18nPh = 'options.qa.answerPh';
     textarea.placeholder = I18n.t('options.qa.answerPh');
 
     qaItem.appendChild(labelEl);
