@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Apply Pilot</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      max-width: 760px;
+      margin: 48px auto;
+      padding: 0 24px 64px;
+      color: #1a1a1a;
+      line-height: 1.7;
+      font-size: 16px;
+    }
+    h1 { font-size: 1.8rem; margin-bottom: 4px; }
+    h2 { font-size: 1.15rem; margin-top: 2rem; border-bottom: 1px solid #e5e5e5; padding-bottom: 6px; }
+    p  { margin: 0.6rem 0; }
+    a  { color: #0066cc; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f5f5f5; font-weight: 600; }
+    code {
+      background: #f0f0f0;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+    ul { padding-left: 1.4em; margin: 0.5rem 0; }
+    li { margin: 0.25rem 0; }
+    .meta { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
+    hr { border: none; border-top: 1px solid #e5e5e5; margin: 2rem 0; }
+  </style>
+</head>
+<body>
+
+<h1>Privacy Policy — Apply Pilot</h1>
+<p class="meta">Last updated: April 16, 2026</p>
+
+<p>Apply Pilot ("the Extension") is a Chrome extension that helps you auto-fill job application forms using a personal profile you create and manage entirely on your own device.</p>
+
+<hr>
+
+<h2>1. Data We Collect and Store</h2>
+
+<p>Apply Pilot stores the following data <strong>locally on your device</strong> using Chrome's built-in <code>chrome.storage.local</code> API. This data never leaves your device unless you explicitly enable the optional AI feature described in Section 3.</p>
+
+<table>
+  <thead>
+    <tr><th>Category</th><th>Examples</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Personal information</td><td>Name, email address, phone number, date of birth, gender, nationality</td></tr>
+    <tr><td>Address</td><td>Street, city, state, postal code, country</td></tr>
+    <tr><td>Online profiles</td><td>LinkedIn, GitHub, portfolio, personal website URLs</td></tr>
+    <tr><td>Work information</td><td>Job title, company, years of experience, notice period, salary expectation, work authorization status</td></tr>
+    <tr><td>Education</td><td>Degree, university, major, graduation year</td></tr>
+    <tr><td>Skills</td><td>Programming languages, technical skills, certifications</td></tr>
+    <tr><td>Pre-written answers</td><td>Your prepared answers to common application questions (e.g., "Why do you want this role?")</td></tr>
+    <tr><td>AI provider settings</td><td>Your chosen AI provider (Anthropic or OpenAI), model name, and API key — stored locally only</td></tr>
+  </tbody>
+</table>
+
+<p><strong>We do not operate any servers. None of this data is transmitted to Apply Pilot or its developer.</strong></p>
+
+<hr>
+
+<h2>2. How We Use Your Data</h2>
+
+<p>Your profile data is used solely to:</p>
+<ul>
+  <li>Automatically detect and fill form fields on job application pages you visit</li>
+  <li>Match form fields to the relevant profile entries using keyword and semantic analysis</li>
+  <li>Generate draft answers for open-ended application questions (when AI is enabled)</li>
+  <li>Remember answers you manually enter so the same field can be filled automatically next time ("auto-learning")</li>
+</ul>
+
+<hr>
+
+<h2>3. Optional AI Features and Third-Party Data Transmission</h2>
+
+<p>Apply Pilot includes an <strong>optional AI matching feature</strong> powered by third-party large language model (LLM) APIs. This feature is <strong>disabled by default</strong> and only activates when you:</p>
+<ol>
+  <li>Explicitly enable it in the extension's Settings page, and</li>
+  <li>Provide your own API key from Anthropic or OpenAI.</li>
+</ol>
+
+<p><strong>When AI is enabled</strong>, the following data is sent to the API provider you selected (Anthropic or OpenAI):</p>
+<ul>
+  <li>Selected fields from your profile (e.g., job title, years of experience, skills, education, pre-written answers)</li>
+  <li>Information about unmatched form fields on the current page (field labels, placeholders, input types)</li>
+</ul>
+
+<p>This data is transmitted directly from your browser to the API provider. It is <strong>not</strong> routed through any Apply Pilot server.</p>
+
+<p>Please review the privacy policies of your chosen provider:</p>
+<ul>
+  <li>Anthropic: <a href="https://www.anthropic.com/privacy" target="_blank">https://www.anthropic.com/privacy</a></li>
+  <li>OpenAI: <a href="https://openai.com/policies/privacy-policy" target="_blank">https://openai.com/policies/privacy-policy</a></li>
+</ul>
+
+<p><strong>If you do not enable the AI feature, no data is ever sent to any external service.</strong></p>
+
+<hr>
+
+<h2>4. Data Storage and Retention</h2>
+
+<p>All data is stored locally in your browser using <code>chrome.storage.local</code>. It remains on your device until you:</p>
+<ul>
+  <li>Manually clear it in the Settings page</li>
+  <li>Uninstall the extension (which removes all stored data)</li>
+</ul>
+
+<p>Apply Pilot does not have access to your stored data, cannot retrieve it, and cannot delete it on your behalf.</p>
+
+<hr>
+
+<h2>5. Permissions Explanation</h2>
+
+<table>
+  <thead>
+    <tr><th>Permission</th><th>Purpose</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>storage</code></td><td>Save your profile and settings locally on your device</td></tr>
+    <tr><td><code>activeTab</code></td><td>Read the current tab's URL to identify the active page</td></tr>
+    <tr><td><code>scripting</code></td><td>Inject the form-filling script into the current page when you trigger it</td></tr>
+    <tr><td><code>host_permissions: &lt;all_urls&gt;</code></td><td>Job application forms exist across thousands of different employer and recruiting platform websites. Broad host permission is required so the extension can work on any site you choose to use it on.</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2>6. Data Sharing</h2>
+
+<p>Apply Pilot does <strong>not</strong>:</p>
+<ul>
+  <li>Sell, rent, or share your personal data with any third party</li>
+  <li>Transmit your data to any Apply Pilot server</li>
+  <li>Use your data for advertising or analytics</li>
+  <li>Share data with third parties except as described in Section 3 (API calls you initiate)</li>
+</ul>
+
+<hr>
+
+<h2>7. Children's Privacy</h2>
+
+<p>Apply Pilot is intended for adults seeking employment. We do not knowingly collect data from users under the age of 16.</p>
+
+<hr>
+
+<h2>8. Changes to This Policy</h2>
+
+<p>If this policy is updated, the "Last updated" date at the top of this page will change. Continued use of the extension after changes constitutes acceptance of the updated policy.</p>
+
+<hr>
+
+<h2>9. Contact</h2>
+
+<p>If you have questions or concerns about this privacy policy, please contact:</p>
+<p>
+  <strong>Email:</strong> <a href="mailto:support@littlellm.com">support@littlellm.com</a><br>
+  <strong>GitHub:</strong> <a href="https://github.com/janewu77/apply-pilot" target="_blank">https://github.com/janewu77/apply-pilot</a>
+</p>
+
+</body>
+</html>
