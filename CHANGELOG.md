@@ -7,13 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+
 ## [1.1.4] - 2026-04-17
 
-### Added
-- Add EN/ZH i18n for popup and options
-
 ### Changed
-- I18n content script, build/release scripts, CWS listing
+- Auto-generate CHANGELOG from git in release script
 
 ## [1.1.3] - 2026-04-17
 
