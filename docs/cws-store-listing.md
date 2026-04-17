@@ -47,3 +47,7 @@ PERMISSIONS & PRIVACY
 • storage: needed to save your profile and learned answers locally.
 • host_permissions (<all_urls>): job application pages exist on many different domains; this allows the extension to work across all of them.
 ```
+
+
+## privacy
+https://janewu77.github.io/apply-pilot/privacy.html

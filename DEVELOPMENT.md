@@ -32,7 +32,7 @@ apply-pilot/
 │       ├── icon16.png
 │       ├── icon48.png
 │       └── icon128.png
-├── doc/
+├── docs/
 ├── README.md
 ├── README.zh.md
 ├── DEVELOPMENT.md           # This file
