@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 
+## [2.0.1] - 2026-04-18
+
+### Changed
+- Use extension icon in action bar; add web_accessible_resources for icons
+- Streamline READMEs, expand developer docs, add CWS permissions
 ## [2.0.0] - 2026-04-18
 
 ### Changed
