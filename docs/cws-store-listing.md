@@ -70,3 +70,10 @@ Apply Pilot uses the scripting API to inject its content script and CSS overlay 
 
 **Host permission justification**
 Job application forms exist on thousands of different domains — company career pages, and platforms like Greenhouse, Lever, Workday, Ashby, and others. There is no fixed list of job sites. The <all_urls> host permission is necessary so Apply Pilot can work on any job application page the user visits, regardless of domain.
+
+
+## Screenshots
+Up to a maximum of 5
+1280x800 or 640x400
+JPEG or 24-bit PNG (no alpha)
+At least one is required 
