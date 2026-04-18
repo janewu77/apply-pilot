@@ -9,7 +9,13 @@ For developers who want to run, debug, or modify Apply Pilot locally. — [中�
 
 ## Loading the Extension Locally
 
-Follow the installation steps in [README.md](README.md): go to `chrome://extensions/`, enable Developer mode, click **Load unpacked**, and select the `src/` folder. After editing code, click the refresh icon on the extension card to reload it. Changes to content scripts also require a page refresh on the target tab.
+1. Open Chrome and go to `chrome://extensions/`
+2. Enable **Developer mode** (top-right toggle)
+3. Click **Load unpacked**
+4. Select the `src/` folder from this repository
+5. The settings page opens automatically after installation
+6. After editing code, click the refresh icon on the extension card to reload it. 
+7. Changes to content scripts also require a page refresh on the target tab.
 
 ## Project Structure
 
@@ -65,6 +71,21 @@ The Content Script main controller, injected into all pages. Responsibilities:
 ### `background.js`
 Service Worker with a light footprint: listens for the `Alt+F` (or `Option+F` on Mac) shortcut and forwards a `scanAndFill` message to the current tab's content script; automatically opens the settings page on first install.
 
+## Hidden Field Filtering
+
+The scanner automatically skips invisible inputs to avoid filling hidden honeypot fields. It detects 10 types of hidden elements:
+
+1. `type=hidden` and `disabled` fields
+2. CSS `display:none`, `visibility:hidden`, `opacity:0`
+3. Extremely small dimensions (width or height < 2 px — common honeypot technique)
+4. Off-screen via large negative `left`/`top` positioning
+5. CSS clipping (`clip: rect(0,0,0,0)`, `clip-path: inset(100%)`, etc.)
+6. CSS `width:0` / `height:0` / `max-width:0`
+7. Ancestor element `overflow:hidden` + very small container (layered honeypot)
+8. `aria-hidden="true"` on the element itself or an ancestor
+9. `tabindex=-1` combined with suspicious dimensions
+10. `name`/`id` containing honeypot keywords (`honeypot`, `trap`, `bot`, `leave_blank`, etc.)
+
 ## Data Storage
 
 Two keys are stored in Chrome Storage Local:
@@ -78,6 +99,14 @@ chrome.storage.local.get('applyPilotProfile')
 chrome.storage.local.get('applyPilotLLM')
 // { provider, apiKey, apiKeyOpenAI, model, enabled }
 ```
+
+## React / Vue Compatibility
+
+Many job sites use controlled inputs — the field looks filled in the UI, but the framework's internal state wasn't updated. To handle this, the extension:
+
+- Uses the native `value` setter and dispatches an **`InputEvent`** (`insertReplacementText`, `composed: true`) plus `change`, then a `blur` on the next frame to trigger the form's `touched`/validation logic
+- Dropdowns and checkboxes also receive `input`/`change` events
+- A yellow notice bar appears in the action bar after scanning as a reminder to self-check filled fields
 
 ## Debugging Tips
 

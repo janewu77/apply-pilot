@@ -6,14 +6,19 @@
 
 **Smart Job Application Form Auto-Filler** — [中文版](README.zh.md)
 
-## What It Does
+Tired of typing the same information into every job application form? Apply Pilot fills it for you — instantly.
 
-1. **One-click scan**: Automatically detects all form fields on the page
-2. **Keyword matching**: Intelligently maps your profile to fields via label, placeholder, name, and other attributes
-3. **AI semantic understanding**: Falls back to Claude/GPT API for fields that can't be matched by keywords
-4. **Open-ended question generation**: Drafts answers for questions like "Why do you want to join us?"
-5. **Auto-learning for unmatched fields**: When you manually fill a yellow "?" field and click **Save to Presets** (or confirm on close), the field clue and your answer are saved locally. Next time the same clue appears it will be matched with high confidence. These entries are tagged "Auto-learned" and appear under **Common Q&A Presets** in Settings, where you can edit or delete them
-6. **You stay in control**: Review, edit, and submit everything yourself
+Save your profile once — name, contact info, work history, education, and Q&A presets — then let Apply Pilot scan and fill any application form with one click or `Alt+F` (`Option+F` on Mac).
+
+- ⚡ **Keyword matching**: instantly maps your profile to form fields
+- 🔄 **Learned answers**: reuses answers you've saved from previous applications
+- 🤖 **AI semantic matching** (optional): connects to Claude or GPT to handle fields that don't match keywords
+- 🟡 **Colour-coded labels**: Blue = matched · Green = filled · Yellow = unmatched, fill manually
+- 📚 **Auto-learning**: manually fill a yellow field once, and it's remembered for next time
+- 🔒 **Privacy-first**: all data stays in Chrome Storage — nothing sent to any server
+- ✅ **You stay in control**: nothing is submitted automatically
+
+Supports forms in English · Deutsch · 中文. Works on most job sites. No account required. No data collected.
 
 ## Installation
 
@@ -103,7 +108,7 @@ Keyword matching supports forms in three languages:
 - Your API key is only used to call the AI API when you enable that feature
 - Exported profiles **do not include your API key**
 - You can export a backup or reset all data at any time under Data Management
-- **Export profile** includes the full profile (including auto-learned Q&A and `learnedAnswerMeta`); you can also separately **export / import Common Q&A** as JSON
+- You can separately **export / import Common Q&A** as JSON
 
 ## Keyboard Shortcut
 
@@ -111,33 +116,9 @@ Keyword matching supports forms in three languages:
 |----------|--------|
 | `Alt+F` (or `Option+F` on Mac) | Scan and match the current page's form |
 
-## Hidden Field Filtering
-
-The scanner automatically skips invisible inputs to avoid filling hidden honeypot fields. It detects 10 types of hidden elements:
-
-1. `type=hidden` and `disabled` fields
-2. CSS `display:none`, `visibility:hidden`, `opacity:0`
-3. Extremely small dimensions (width or height < 2 px — common honeypot technique)
-4. Off-screen via large negative `left`/`top` positioning
-5. CSS clipping (`clip: rect(0,0,0,0)`, `clip-path: inset(100%)`, etc.)
-6. CSS `width:0` / `height:0` / `max-width:0`
-7. Ancestor element `overflow:hidden` + very small container (layered honeypot)
-8. `aria-hidden="true"` on the element itself or an ancestor
-9. `tabindex=-1` combined with suspicious dimensions
-10. `name`/`id` containing honeypot keywords (`honeypot`, `trap`, `bot`, `leave_blank`, etc.)
-
 ## "Filled but still shows required field error"?
 
-Many job sites use **React / Vue** controlled inputs: the field looks filled in the UI, but the framework's internal state wasn't updated — so validation still fails on submit.
-
-**The extension tries hard to be compatible**: for text inputs it uses the native `value` setter and dispatches an **`InputEvent`** (`insertReplacementText`, `composed: true`) plus `change`, then a `blur` on the next frame to trigger the form's `touched`/validation logic. Dropdowns and checkboxes also receive `input`/`change` events.
-
-**The UI warns you**: a yellow notice bar appears in the action bar after scanning; batch-fill notifications stay visible a few extra seconds with a self-check reminder; field label tooltips and the extension popup footer also carry a brief note.
-
-If a specific site still reports errors, try:
-1. In an auto-filled field, **type one character then delete it**, or **click inside then click outside** (triggers a real `focus`/`blur`).
-2. Check for **a hidden input with the same name** (some sites validate against the hidden field, not the visible one).
-3. If the **whole page is inside an iframe**, make sure the extension injected into the document you're actually filling.
+Some job sites may not recognize auto-filled values right away. If you see validation errors after filling, simply **press Tab to go through each field once** — that's usually enough to fix it.
 
 ## Known Limitations
 

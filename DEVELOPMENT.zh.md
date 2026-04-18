@@ -9,7 +9,13 @@
 
 ## 本地加载扩展
 
-本地加载方式见 README.zh.md 的"安装步骤"一节，选择 `src/` 文件夹加载即可。修改代码后点击扩展卡片上的刷新图标生效；Content Script 改动还需刷新目标页面。
+1. 打开 Chrome，访问 `chrome://extensions/`
+2. 打开右上角 **开发者模式**
+3. 点击 **加载已解压的扩展程序**
+4. 选择项目中的 `src/` 文件夹
+5. 扩展安装后会自动打开设置页面
+6. 修改代码后点击扩展卡片上的刷新图标生效
+7. Content Script 改动也需刷新目标页面
 
 ## 项目结构
 
@@ -65,6 +71,21 @@ Content Script 主控制器，注入到所有页面。负责：
 ### `background.js`
 Service Worker，职责很轻：监听 `Alt+F`（Mac 上为 `Option+F`）快捷键，转发 `scanAndFill` 消息给当前 Tab 的 content script；首次安装时自动打开设置页面。
 
+## 隐藏字段智能过滤
+
+扫描时会自动跳过页面上所有不可见的输入框，避免误填。检测覆盖以下 10 类隐藏手法：
+
+1. `type=hidden`、`disabled` 字段
+2. CSS `display:none`、`visibility:hidden`、`opacity:0`
+3. 尺寸极小（宽或高 < 2px，常见 honeypot 反爬手法）
+4. 负定位移出屏幕（`left`/`top` 极大负值）
+5. CSS 裁剪隐藏（`clip: rect(0,0,0,0)`、`clip-path: inset(100%)` 等）
+6. CSS `width:0` / `height:0` / `max-width:0`
+7. 祖先元素 `overflow:hidden` + 极小容器（层级 honeypot）
+8. `aria-hidden="true"`（自身或祖先）
+9. `tabindex=-1` + 尺寸可疑的组合
+10. name/id 包含 honeypot 关键词（如 `honeypot`、`trap`、`bot`、`leave_blank`）
+
 ## 数据存储结构
 
 Chrome Storage Local 中存储两个 key：
@@ -78,6 +99,14 @@ chrome.storage.local.get('applyPilotProfile')
 chrome.storage.local.get('applyPilotLLM')
 // { provider, apiKey, apiKeyOpenAI, model, enabled }
 ```
+
+## React / Vue 兼容性处理
+
+很多招聘站用受控输入，界面看起来有字，但框架内部 state 未更新。扩展的处理方式：
+
+- 对文本框使用原生 `value` setter，并派发带 `composed: true` 的 **`InputEvent`**（`insertReplacementText`）和 `change`，再在下一帧补 `blur`，触发表单的 `touched` / 校验逻辑
+- 下拉框、勾选框也会补发 `input`/`change` 事件
+- 扫描后底部操作栏会出现黄色提示条，提醒用户自检填写结果
 
 ## 调试技巧
 
