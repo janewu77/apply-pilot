@@ -38,6 +38,9 @@ apply-pilot/
 │       ├── icon16.png
 │       ├── icon48.png
 │       └── icon128.png
+├── example/
+│   ├── apply-pilot-profile-example.json   # Example profile export (data format reference)
+│   └── apply-pilot-qa-example.json        # Example Q&A export (data format reference)
 ├── docs/
 ├── README.md
 ├── README.zh.md

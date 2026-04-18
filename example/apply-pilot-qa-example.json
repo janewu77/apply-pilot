@@ -1,0 +1,14 @@
+{
+  "kind": "apply-pilot-qa",
+  "commonAnswers": {
+    "careerGoals": "",
+    "greatestStrength": "",
+    "greatestWeakness": "",
+    "selfIntroduction": "Jane Wu is a seasoned software engineer with over 20 years of experience in software development and AI application development...",
+    "whyThisCompany": "",
+    "whyThisRole": ""
+  },
+  "learnedAnswerMeta": {},
+  "exportDate": "2026-04-18T12:40:29.019Z",
+  "version": "1.1.0"
+}

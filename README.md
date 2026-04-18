@@ -109,6 +109,7 @@ Keyword matching supports forms in three languages:
 - Exported profiles **do not include your API key**
 - You can export a backup or reset all data at any time under Data Management
 - You can separately **export / import Common Q&A** as JSON
+- See [`example/`](example/) for sample export files showing the expected JSON format
 
 ## Keyboard Shortcut
 

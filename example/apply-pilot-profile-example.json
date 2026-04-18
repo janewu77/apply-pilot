@@ -1,0 +1,67 @@
+{
+  "profile": {
+    "address": {
+      "city": "Berlin",
+      "country": "Germany",
+      "postalCode": "10115",
+      "state": "Berlin",
+      "street": "Musterstraße 1"
+    },
+    "commonAnswers": {
+      "careerGoals": "",
+      "greatestStrength": "",
+      "greatestWeakness": "",
+      "selfIntroduction": "Jane Wu is a seasoned software engineer with over 20 years of experience in software development and AI application development...",
+      "whyThisCompany": "",
+      "whyThisRole": ""
+    },
+    "education": {
+      "graduationYear": "2023",
+      "highestDegree": "Master's",
+      "major": "Computer Science",
+      "university": "University of World"
+    },
+    "links": {
+      "github": "https://github.com/your-username",
+      "linkedin": "https://www.linkedin.com/in/your-profile/",
+      "portfolio": "",
+      "twitter": "",
+      "website": ""
+    },
+    "personal": {
+      "currentLocation": "Berlin, Germany",
+      "dateOfBirth": "03/01/2026",
+      "email": "your@email.com",
+      "firstName": "Jane",
+      "fullName": "Jane Wu",
+      "gender": "female",
+      "lastName": "Wu",
+      "nationality": "Chinese",
+      "phone": "+49 1234567890"
+    },
+    "skills": {
+      "certifications": "",
+      "languages": "English (Fluent), German (B2), Chinese (Native)",
+      "technical": "Python, Java, Flutter, AWS, Spring Boot, ChatGPT, LangChain, Serverless, Redis"
+    },
+    "work": {
+      "currentCompany": "Company GmbH",
+      "currentTitle": "Software Engineer ",
+      "noticePeriod": "3 months",
+      "salaryExpectation": "",
+      "startDate": "2026-07-01",
+      "visaSponsorship": "",
+      "willingToRelocate": "yes",
+      "workAuthorization": "",
+      "yearsOfExperience": "5"
+    }
+  },
+  "llmSettings": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-4-5-20250514",
+    "modelOpenAI": "gpt-4o-mini",
+    "enabled": false
+  },
+  "exportDate": "2026-04-18T12:40:27.324Z",
+  "version": "1.1.0"
+}
