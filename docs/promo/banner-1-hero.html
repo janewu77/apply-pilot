@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1280px; height: 800px; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f0f1a;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bg-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 70%);
+    top: -150px; right: -100px;
+  }
+  .bg-glow2 {
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
+    bottom: -100px; left: -100px;
+  }
+
+  .container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 1160px;
+    gap: 60px;
+  }
+
+  .left {
+    flex: 1;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(139,92,246,0.15);
+    border: 1px solid rgba(139,92,246,0.4);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 13px;
+    color: #c4b5fd;
+    margin-bottom: 28px;
+    letter-spacing: 0.3px;
+  }
+  .badge-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #8b5cf6;
+    box-shadow: 0 0 8px #8b5cf6;
+  }
+
+  h1 {
+    font-size: 54px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+  }
+  h1 .muted { color: #94a3b8; }
+  h1 .highlight {
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .sub {
+    font-size: 20px;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    max-width: 480px;
+  }
+
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 100px;
+    padding: 8px 18px;
+    font-size: 14px;
+    color: #cbd5e1;
+  }
+
+  /* Right: mock form card */
+  .card {
+    width: 480px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 32px;
+    backdrop-filter: blur(10px);
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .card-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .card-title { font-size: 16px; font-weight: 600; color: #e2e8f0; }
+  .card-sub { font-size: 12px; color: #64748b; }
+
+  .form-row { margin-bottom: 16px; position: relative; }
+  .form-label { font-size: 12px; color: #64748b; margin-bottom: 6px; }
+  .form-input {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #e2e8f0;
+    position: relative;
+  }
+  .form-input.filled {
+    border-color: rgba(34,197,94,0.5);
+    background: rgba(34,197,94,0.05);
+  }
+  .form-input.matched {
+    border-color: rgba(59,130,246,0.5);
+    background: rgba(59,130,246,0.05);
+  }
+  .form-input.unmatched {
+    border-color: rgba(234,179,8,0.4);
+    background: rgba(234,179,8,0.03);
+  }
+
+  .badge-tag {
+    position: absolute;
+    right: -36px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .badge-tag.green { background: #22c55e; color: #fff; }
+  .badge-tag.blue  { background: #3b82f6; color: #fff; }
+  .badge-tag.yellow{ background: #eab308; color: #000; }
+
+  .action-bar {
+    margin-top: 20px;
+    background: rgba(139,92,246,0.1);
+    border: 1px solid rgba(139,92,246,0.25);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .action-btn {
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .action-btn.secondary {
+    background: rgba(255,255,255,0.08);
+  }
+
+  .logo-area {
+    position: absolute;
+    top: 40px; left: 60px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .logo-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .logo-text { font-size: 18px; font-weight: 700; color: #fff; }
+</style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <div class="bg-glow2"></div>
+
+  <div class="logo-area">
+    <div class="logo-icon">🚀</div>
+    <div class="logo-text">Apply Pilot</div>
+  </div>
+
+  <div class="container">
+    <div class="left">
+      <div class="badge">
+        <div class="badge-dot"></div>
+        Chrome Extension
+      </div>
+      <h1>
+        Tired of typing<br>
+        the same info<br>
+        <span class="highlight">every time?</span>
+      </h1>
+      <p class="sub">Apply Pilot fills job application forms for you — instantly. Save your profile once, fill any form with one click.</p>
+      <div class="pills">
+        <div class="pill">⚡ One-click fill</div>
+        <div class="pill">🤖 AI matching</div>
+        <div class="pill">🔒 100% local</div>
+        <div class="pill">🌍 EN · DE · 中文</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">📋</div>
+        <div>
+          <div class="card-title">Job Application</div>
+          <div class="card-sub">Software Engineer · Berlin</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-label">Full Name</div>
+        <div class="form-input filled" style="display:flex;justify-content:space-between;align-items:center;">
+          Jane Wu <span style="color:#22c55e;font-size:12px;">✓ filled</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-label">Email Address</div>
+        <div class="form-input filled" style="display:flex;justify-content:space-between;align-items:center;">
+          jane@example.com <span style="color:#22c55e;font-size:12px;">✓ filled</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-label">Years of Experience</div>
+        <div class="form-input matched" style="display:flex;justify-content:space-between;align-items:center;">
+          5 years <span style="color:#3b82f6;font-size:12px;">→ matched</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-label">LinkedIn Profile</div>
+        <div class="form-input matched" style="display:flex;justify-content:space-between;align-items:center;">
+          linkedin.com/in/jane <span style="color:#3b82f6;font-size:12px;">→ matched</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-label">Cover Letter</div>
+        <div class="form-input unmatched" style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="color:#64748b;">Type here...</span> <span style="color:#eab308;font-size:12px;">? manual</span>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <button class="action-btn">Fill High-Confidence</button>
+        <button class="action-btn secondary">Fill All</button>
+        <button class="action-btn secondary">Save</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

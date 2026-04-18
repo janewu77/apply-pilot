@@ -6,6 +6,8 @@
 
 **智能求职表单自动填充助手** — [English](README.md)
 
+![Apply Pilot — 智能求职表单自动填充助手](docs/promo/1-hero.png)
+
 每次求职都要重复填写一样的信息？Apply Pilot 帮你填——一键搞定。
 
 只需保存一份个人档案——姓名、联系方式、工作经历、教育背景、常见问答——之后打开任何求职申请页面，一键或按 `Alt+F`（Mac 上为 `Option+F`）即可自动扫描填充。
@@ -19,6 +21,8 @@
 - ✅ **你来掌控**：没有任何内容会自动提交
 
 支持英语、德语、中文表单。适用于大多数求职网站。无需注册，不收集任何数据。
+
+![Apply Pilot 工作流程](docs/promo/2-how-it-works.png)
 
 ## 安装步骤
 
@@ -103,6 +107,8 @@
 - 🇬🇧 English
 - 🇩🇪 Deutsch
 - 🇨🇳 中文
+
+![Apply Pilot 功能一览](docs/promo/3-features.png)
 
 ## 数据安全
 

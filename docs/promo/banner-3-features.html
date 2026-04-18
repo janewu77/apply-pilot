@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1280px; height: 800px; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f0f1a;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 64px;
+    padding: 0 60px;
+  }
+
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(139,92,246,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139,92,246,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .bg-glow {
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%);
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+  }
+
+  .left {
+    position: relative;
+    flex-shrink: 0;
+    width: 380px;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #8b5cf6;
+    margin-bottom: 16px;
+  }
+  h2 {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+  }
+  h2 .grad {
+    background: linear-gradient(135deg, #a78bfa, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .desc {
+    font-size: 16px;
+    color: #64748b;
+    line-height: 1.7;
+    margin-bottom: 36px;
+  }
+
+  .stats {
+    display: flex;
+    gap: 24px;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .stat-label { font-size: 12px; color: #475569; margin-top: 2px; }
+
+  /* Right: feature grid */
+  .grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    flex: 1;
+  }
+
+  .feat {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 24px;
+    transition: border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feat::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .feat.purple { border-color: rgba(139,92,246,0.25); }
+  .feat.purple::before { background: linear-gradient(135deg, rgba(139,92,246,0.06), transparent); opacity: 1; }
+  .feat.blue { border-color: rgba(59,130,246,0.25); }
+  .feat.blue::before { background: linear-gradient(135deg, rgba(59,130,246,0.06), transparent); opacity: 1; }
+  .feat.teal { border-color: rgba(20,184,166,0.25); }
+  .feat.teal::before { background: linear-gradient(135deg, rgba(20,184,166,0.06), transparent); opacity: 1; }
+  .feat.green { border-color: rgba(34,197,94,0.25); }
+  .feat.green::before { background: linear-gradient(135deg, rgba(34,197,94,0.06), transparent); opacity: 1; }
+  .feat.amber { border-color: rgba(245,158,11,0.25); }
+  .feat.amber::before { background: linear-gradient(135deg, rgba(245,158,11,0.06), transparent); opacity: 1; }
+  .feat.rose { border-color: rgba(244,63,94,0.25); }
+  .feat.rose::before { background: linear-gradient(135deg, rgba(244,63,94,0.06), transparent); opacity: 1; }
+
+  .feat-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .feat-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 6px;
+  }
+  .feat-desc {
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <div class="left">
+    <div class="eyebrow">Features</div>
+    <h2>Everything you need to <span class="grad">apply faster</span></h2>
+    <p class="desc">Stop copying and pasting. Apply Pilot handles the repetitive work so you can focus on what matters.</p>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">3</div>
+        <div class="stat-label">Languages</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">10+</div>
+        <div class="stat-label">Field types</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Data collected</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="feat purple">
+      <span class="feat-icon">⚡</span>
+      <div class="feat-title">Keyword Matching</div>
+      <div class="feat-desc">Instantly maps your profile to form fields — no waiting, no API calls needed.</div>
+    </div>
+    <div class="feat blue">
+      <span class="feat-icon">🤖</span>
+      <div class="feat-title">AI Semantic Fill</div>
+      <div class="feat-desc">Claude or GPT handles fields that keywords can't match — including open-ended questions.</div>
+    </div>
+    <div class="feat teal">
+      <span class="feat-icon">📚</span>
+      <div class="feat-title">Auto-Learning</div>
+      <div class="feat-desc">Fill a new field once — Apply Pilot remembers it for every future application.</div>
+    </div>
+    <div class="feat green">
+      <span class="feat-icon">🔒</span>
+      <div class="feat-title">100% Local</div>
+      <div class="feat-desc">All data stays in your browser. Nothing is sent to any server. Ever.</div>
+    </div>
+    <div class="feat amber">
+      <span class="feat-icon">🌍</span>
+      <div class="feat-title">3 Languages</div>
+      <div class="feat-desc">Supports job application forms in English, Deutsch, and 中文.</div>
+    </div>
+    <div class="feat rose">
+      <span class="feat-icon">✅</span>
+      <div class="feat-title">You Stay in Control</div>
+      <div class="feat-desc">Review everything before submitting. Nothing is auto-submitted.</div>
+    </div>
+  </div>
+
+</body>
+</html>

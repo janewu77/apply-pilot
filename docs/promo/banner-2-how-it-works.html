@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1280px; height: 800px; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f0f1a;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bg-glow {
+    position: absolute;
+    width: 800px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(139,92,246,0.12) 0%, transparent 70%);
+    top: 0; left: 50%; transform: translateX(-50%);
+  }
+
+  .title-area {
+    text-align: center;
+    margin-bottom: 52px;
+    position: relative;
+  }
+  .eyebrow {
+    font-size: 13px;
+    color: #8b5cf6;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  h2 {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  h2 .dim { color: #475569; }
+
+  .steps {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    position: relative;
+    width: 1100px;
+  }
+
+  .step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    padding: 0 20px;
+  }
+
+  .step-connector {
+    position: absolute;
+    top: 32px;
+    right: -20px;
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(139,92,246,0.6), rgba(59,130,246,0.3));
+    z-index: 1;
+  }
+
+  .step-num {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
+  }
+  .step-num.s1 { background: linear-gradient(135deg, #7c3aed, #8b5cf6); box-shadow: 0 0 30px rgba(139,92,246,0.4); }
+  .step-num.s2 { background: linear-gradient(135deg, #1d4ed8, #3b82f6); box-shadow: 0 0 30px rgba(59,130,246,0.4); }
+  .step-num.s3 { background: linear-gradient(135deg, #0f766e, #14b8a6); box-shadow: 0 0 30px rgba(20,184,166,0.4); }
+  .step-num.s4 { background: linear-gradient(135deg, #15803d, #22c55e); box-shadow: 0 0 30px rgba(34,197,94,0.4); }
+
+  .step-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+  .step-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #e2e8f0;
+  }
+  .step-desc {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.6;
+    max-width: 200px;
+  }
+
+  /* Mini card inside step */
+  .mini-card {
+    margin-top: 18px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 12px;
+    width: 190px;
+    text-align: left;
+  }
+  .mini-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 12px;
+    color: #94a3b8;
+  }
+  .mini-row:last-child { border-bottom: none; }
+  .mini-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .mini-tag {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 100px;
+    font-weight: 600;
+  }
+  .tag-green { background: rgba(34,197,94,0.15); color: #22c55e; }
+  .tag-blue  { background: rgba(59,130,246,0.15); color: #3b82f6; }
+  .tag-yellow{ background: rgba(234,179,8,0.15);  color: #eab308; }
+
+  .bottom-bar {
+    margin-top: 48px;
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    position: relative;
+  }
+  .bottom-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #64748b;
+  }
+  .bottom-pill span { color: #94a3b8; }
+  .divider { width: 1px; height: 20px; background: rgba(255,255,255,0.1); }
+</style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <div class="title-area">
+    <div class="eyebrow">How it works</div>
+    <h2>Three rounds. <span class="dim">Zero repetition.</span></h2>
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num s1">📋</div>
+      <div class="step-label">Step 1</div>
+      <div class="step-title">Save Profile</div>
+      <div class="step-desc">Enter your info once — name, contact, work history, skills, Q&A</div>
+      <div class="step-connector"></div>
+    </div>
+
+    <div class="step">
+      <div class="step-num s2">🔍</div>
+      <div class="step-label">Step 2</div>
+      <div class="step-title">Scan Page</div>
+      <div class="step-desc">Click the icon or press Alt+F — Apply Pilot scans every field</div>
+      <div class="step-connector"></div>
+      <div class="mini-card">
+        <div class="mini-row">
+          <div style="display:flex;align-items:center;gap:6px;"><div class="mini-dot" style="background:#3b82f6"></div>Full Name</div>
+          <div class="mini-tag tag-blue">keyword</div>
+        </div>
+        <div class="mini-row">
+          <div style="display:flex;align-items:center;gap:6px;"><div class="mini-dot" style="background:#14b8a6"></div>Cover Letter</div>
+          <div class="mini-tag tag-blue">AI</div>
+        </div>
+        <div class="mini-row">
+          <div style="display:flex;align-items:center;gap:6px;"><div class="mini-dot" style="background:#eab308"></div>Custom field</div>
+          <div class="mini-tag tag-yellow">manual</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num s3">✨</div>
+      <div class="step-label">Step 3</div>
+      <div class="step-title">Review & Fill</div>
+      <div class="step-desc">Color-coded labels show what's matched — click to fill or adjust</div>
+      <div class="step-connector"></div>
+      <div class="mini-card">
+        <div class="mini-row">
+          <span>🔵 Matched</span><span style="color:#3b82f6">click to fill</span>
+        </div>
+        <div class="mini-row">
+          <span>🟢 Filled</span><span style="color:#22c55e">done ✓</span>
+        </div>
+        <div class="mini-row">
+          <span>🟡 Unknown</span><span style="color:#eab308">type manually</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num s4">🚀</div>
+      <div class="step-label">Step 4</div>
+      <div class="step-title">Submit</div>
+      <div class="step-desc">Review everything yourself — nothing is submitted automatically</div>
+      <div class="mini-card" style="text-align:center;padding:16px 12px;">
+        <div style="font-size:28px;margin-bottom:6px;">🎯</div>
+        <div style="font-size:12px;color:#22c55e;font-weight:600;">Application sent!</div>
+        <div style="font-size:11px;color:#475569;margin-top:4px;">You're always in control</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bottom-bar">
+    <div class="bottom-pill">⚡ <span>Instant keyword match</span></div>
+    <div class="divider"></div>
+    <div class="bottom-pill">🤖 <span>AI for tricky fields</span></div>
+    <div class="divider"></div>
+    <div class="bottom-pill">📚 <span>Auto-learns over time</span></div>
+    <div class="divider"></div>
+    <div class="bottom-pill">🔒 <span>All data stays local</span></div>
+  </div>
+
+</body>
+</html>

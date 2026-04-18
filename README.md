@@ -6,6 +6,8 @@
 
 **Smart Job Application Form Auto-Filler** — [中文版](README.zh.md)
 
+![Apply Pilot — Smart Job Application Auto-Filler](docs/promo/1-hero.png)
+
 Tired of typing the same information into every job application form? Apply Pilot fills it for you — instantly.
 
 Save your profile once — name, contact info, work history, education, and Q&A presets — then let Apply Pilot scan and fill any application form with one click or `Alt+F` (`Option+F` on Mac).
@@ -19,6 +21,8 @@ Save your profile once — name, contact info, work history, education, and Q&A 
 - ✅ **You stay in control**: nothing is submitted automatically
 
 Supports forms in English · Deutsch · 中文. Works on most job sites. No account required. No data collected.
+
+![How Apply Pilot works](docs/promo/2-how-it-works.png)
 
 ## Installation
 
@@ -101,6 +105,8 @@ Keyword matching supports forms in three languages:
 - 🇬🇧 English
 - 🇩🇪 Deutsch
 - 🇨🇳 Chinese
+
+![Apply Pilot features](docs/promo/3-features.png)
 
 ## Data & Privacy
 
