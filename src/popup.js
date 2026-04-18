@@ -35,6 +35,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('langZh').classList.toggle('active', lang === 'zh');
   }
 
+  // ── Injection ────────────────────────────────────────────
+  const CONTENT_SCRIPTS = ['i18n.js', 'profile.js', 'matcher.js', 'llm.js', 'content.js'];
+  const CONTENT_CSS = ['styles/overlay.css'];
+
+  async function injectIfNeeded(tabId) {
+    try {
+      await chrome.scripting.insertCSS({ target: { tabId }, files: CONTENT_CSS });
+      await chrome.scripting.executeScript({ target: { tabId }, files: CONTENT_SCRIPTS });
+    } catch (e) {
+      console.warn('[Apply Pilot] injection failed:', e);
+    }
+  }
+
   // ── Helpers ──────────────────────────────────────────────
   function showMessage(text, isError = false) {
     messageEl.textContent = text;
@@ -49,16 +62,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('filledFields').textContent  = stats.filled  ?? '-';
   }
 
-  async function sendToTab(message) {
+  async function sendToTab(message, { inject = false } = {}) {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (!tab?.id) {
       showMessage(I18n.t('popup.msg.noTab'), true);
       return null;
     }
+    if (inject) {
+      await injectIfNeeded(tab.id);
+    }
     return new Promise((resolve) => {
       chrome.tabs.sendMessage(tab.id, message, (response) => {
         if (chrome.runtime.lastError) {
-          showMessage(I18n.t('popup.msg.refresh'), true);
+          if (inject) showMessage(I18n.t('popup.msg.refresh'), true);
           resolve(null);
         } else {
           resolve(response);
@@ -78,7 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const res = await sendToTab({
       action: 'scanAndFill',
       options: { useLLM: llmSettings.enabled === true, autoFill: false },
-    });
+    }, { inject: true });
     if (res?.stats) {
       updateStats(res.stats);
       showMessage(I18n.t('popup.msg.scanDone'));

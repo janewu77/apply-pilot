@@ -45,9 +45,8 @@ PERMISSIONS & PRIVACY
 • All data stored locally in Chrome Storage — nothing sent to any server.
 • Your API key is only used to call the AI provider you choose.
 • Export a profile backup or reset all data any time in Settings.
-• activeTab + scripting: needed to scan and fill the current page.
+• activeTab + scripting: needed to scan and fill the form on the current page — only activated when you explicitly trigger the extension.
 • storage: saves your profile and learned answers locally.
-• host_permissions (<all_urls>): allows the extension to work on any job site.
 ```
 
 
@@ -68,8 +67,7 @@ Apply Pilot needs access to the currently active tab to scan form fields on the 
 **scripting justification**
 Apply Pilot uses the scripting API to inject its content script and CSS overlay into the active tab. This is required to detect form fields, display colour-coded match labels (blue/green/yellow), and fill in values — all of which require direct interaction with the page's DOM. The script is only injected when the user explicitly triggers the extension.
 
-**Host permission justification**
-Job application forms exist on thousands of different domains — company career pages, and platforms like Greenhouse, Lever, Workday, Ashby, and others. There is no fixed list of job sites. The <all_urls> host permission is necessary so Apply Pilot can work on any job application page the user visits, regardless of domain.
+
 
 
 ## Screenshots

@@ -8,9 +8,6 @@
     "activeTab",
     "scripting"
   ],
-  "host_permissions": [
-    "<all_urls>"
-  ],
   "background": {
     "service_worker": "background.js"
   },
@@ -23,24 +20,6 @@
     }
   },
   "options_page": "options.html",
-  "content_scripts": [
-    {
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": [
-        "i18n.js",
-        "profile.js",
-        "matcher.js",
-        "llm.js",
-        "content.js"
-      ],
-      "css": [
-        "styles/overlay.css"
-      ],
-      "run_at": "document_idle"
-    }
-  ],
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
