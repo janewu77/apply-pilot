@@ -530,7 +530,7 @@
     bar.id = 'apply-pilot-action-bar';
     bar.innerHTML = `
       <div class="apply-pilot-bar-main">
-        <div class="apply-pilot-bar-title">🚀 Apply Pilot</div>
+        <div class="apply-pilot-bar-title"><img src="${chrome.runtime.getURL('icons/icon16.png')}" alt="Apply Pilot" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;border-radius:3px;"> Apply Pilot</div>
         <div class="apply-pilot-bar-stats"></div>
         <div class="apply-pilot-bar-buttons">
           <button id="ap-fill-high">${I18n.t('content.bar.fillHigh')}</button>
