@@ -8,9 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 
-## [1.1.4] - 2026-04-17
+## [2.0.0] - 2026-04-18
 
 ### Changed
+- Respect LLM toggle from storage; OpenAI key/model; batch textarea answers
+- Improve form field matching and clue extraction
+- Rename doc/ to docs/ and refresh dev docs
+- Move privacy policy under docs/ with standalone HTML
 - Auto-generate CHANGELOG from git in release script
 
 ## [1.1.3] - 2026-04-17

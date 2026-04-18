@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   applyLangUI(I18n.currentLang);
   I18n.apply();
 
+  // ── Version ──────────────────────────────────────────────
+  const versionEl = document.querySelector('.version');
+  if (versionEl) {
+    versionEl.textContent = 'v' + chrome.runtime.getManifest().version;
+  }
+
   const btnScan    = document.getElementById('btnScan');
   const btnFillAll = document.getElementById('btnFillAll');
   const btnClear   = document.getElementById('btnClear');
