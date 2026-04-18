@@ -42,14 +42,14 @@ Go to the **AI Settings** tab:
 ### 3. Start using
 Open any job application page. Two ways to trigger:
 - Click the 🚀 icon in the browser toolbar → **Scan & Match Form**
-- Use the keyboard shortcut **Alt+F**
+- Use the keyboard shortcut **Alt+F** (or **Option+F** on Mac)
 
 ## Workflow
 
 ```
 Open application page
     ↓
-Click Scan (or Alt+F)
+Click Scan (or Alt+F / Option+F on Mac)
     ↓
 Round 1: Keyword matching (instant)
     ↓
@@ -109,7 +109,7 @@ Keyword matching supports forms in three languages:
 
 | Shortcut | Action |
 |----------|--------|
-| `Alt+F` | Scan and match the current page's form |
+| `Alt+F` (or `Option+F` on Mac) | Scan and match the current page's form |
 
 ## Hidden Field Filtering
 

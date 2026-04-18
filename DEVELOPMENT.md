@@ -63,7 +63,7 @@ The Content Script main controller, injected into all pages. Responsibilities:
 - Triggers native events when filling fields (`InputEvent` + `change` + `blur`) for React/Vue controlled component compatibility
 
 ### `background.js`
-Service Worker with a light footprint: listens for the `Alt+F` shortcut and forwards a `scanAndFill` message to the current tab's content script; automatically opens the settings page on first install.
+Service Worker with a light footprint: listens for the `Alt+F` (or `Option+F` on Mac) shortcut and forwards a `scanAndFill` message to the current tab's content script; automatically opens the settings page on first install.
 
 ## Data Storage
 

@@ -63,7 +63,7 @@ Content Script 主控制器，注入到所有页面。负责：
 - 填充字段时触发原生事件（InputEvent + change + blur），兼容 React/Vue 受控组件
 
 ### `background.js`
-Service Worker，职责很轻：监听 `Alt+F` 快捷键，转发 `scanAndFill` 消息给当前 Tab 的 content script；首次安装时自动打开设置页面。
+Service Worker，职责很轻：监听 `Alt+F`（Mac 上为 `Option+F`）快捷键，转发 `scanAndFill` 消息给当前 Tab 的 content script；首次安装时自动打开设置页面。
 
 ## 数据存储结构
 

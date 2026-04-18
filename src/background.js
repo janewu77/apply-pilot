@@ -8,9 +8,12 @@ chrome.commands.onCommand.addListener(async (command) => {
   if (command === 'fill-form') {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (tab?.id) {
+      const llmSettings = await new Promise(resolve =>
+        chrome.storage.local.get('applyPilotLLM', r => resolve(r.applyPilotLLM || {}))
+      );
       chrome.tabs.sendMessage(tab.id, {
         action: 'scanAndFill',
-        options: { useLLM: true, autoFill: false },
+        options: { useLLM: llmSettings.enabled === true, autoFill: false },
       });
     }
   }

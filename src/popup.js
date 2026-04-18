@@ -66,9 +66,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnScan.disabled = true;
     // Show "scanning" text inside the button (keep icon span)
     btnScan.querySelector('[data-i18n]').textContent = I18n.t('popup.msg.scanning');
+    const llmSettings = await new Promise(resolve =>
+      chrome.storage.local.get('applyPilotLLM', r => resolve(r.applyPilotLLM || {}))
+    );
     const res = await sendToTab({
       action: 'scanAndFill',
-      options: { useLLM: true, autoFill: false },
+      options: { useLLM: llmSettings.enabled === true, autoFill: false },
     });
     if (res?.stats) {
       updateStats(res.stats);

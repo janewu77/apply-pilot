@@ -19,7 +19,7 @@ Character count: 131
 ## Detailed Description
 
 ```
-Apply Pilot is a smart job application form auto-filler. Save your profile once — name, contact info, work history, education, and Q&A presets — then let the extension scan and fill any application form with one click or Alt+F.
+Apply Pilot is a smart job application form auto-filler. Save your profile once — name, contact info, work history, education, and Q&A presets — then let the extension scan and fill any application form with one click or Alt+F (Option+F on Mac).
 
 HOW IT WORKS
 • Round 1 – Keyword matching: instantly maps your profile to form fields using labels, placeholders, and field names.

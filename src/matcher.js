@@ -262,22 +262,49 @@ function matchFieldByKeywords(element) {
     }
 
     // 检查 autocomplete 属性直接匹配
+    //
+    // autocomplete 的合法值由 WHATWG HTML Living Standard 定义：
+    // https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill
+    //
+    // 当浏览器或站点正确设置了 autocomplete 属性时，这是最可靠的匹配信号，
+    // 优先级高于关键词匹配，因此命中后加 20 分（远高于关键词得分）。
     const autocompleteMap = {
-      'given-name': 'personal.firstName',
-      'family-name': 'personal.lastName',
-      'name': 'personal.fullName',
-      'email': 'personal.email',
-      'tel': 'personal.phone',
-      'street-address': 'address.street',
-      'address-level2': 'address.city',
-      'address-level1': 'address.state',
-      'postal-code': 'address.postalCode',
-      'country-name': 'address.country',
-      'bday': 'personal.dateOfBirth',
-      'url': 'links.website',
+      // 姓名
+      'given-name':       'personal.firstName',
+      'family-name':      'personal.lastName',
+      'name':             'personal.fullName',
+
+      // 联系方式
+      'email':            'personal.email',
+      'tel':              'personal.phone',
+      'tel-national':     'personal.phone',      // 不含国家码的本地号码
+
+      // 地址
+      'street-address':   'address.street',
+      'address-line1':    'address.street',      // 地址第一行，语义等同 street
+      'address-line2':    'address.street',      // 地址第二行，暂映射到同一字段
+      'address-level2':   'address.city',        // 城市（level2 = 市级行政区）
+      'address-level1':   'address.state',       // 省/州（level1 = 一级行政区）
+      'postal-code':      'address.postalCode',
+      'country-name':     'address.country',     // 国家全名
+      'country':          'address.country',     // 国家 ISO 代码（如 DE、CN）
+
+      // 工作信息
+      'organization':       'work.currentCompany', // 公司/组织名
+      'organization-title': 'work.currentTitle',   // 职位名称
+
+      // 个人信息
+      'bday':             'personal.dateOfBirth',  // 完整生日
+      'bday-day':         'personal.dateOfBirth',  // 生日-日
+      'bday-month':       'personal.dateOfBirth',  // 生日-月
+      'bday-year':        'personal.dateOfBirth',  // 生日-年
+      'sex':              'personal.gender',        // 性别
+
+      // 链接
+      'url':              'links.website',
     };
     if (element.autocomplete && autocompleteMap[element.autocomplete] === profileKey) {
-      score += 20; // 强匹配
+      score += 20; // autocomplete 是浏览器标准信号，直接强匹配
     }
 
     if (score > bestScore) {

@@ -47,6 +47,7 @@
     let unmatchedForLLM = [];
 
     // 第一轮：关键词匹配
+    console.log('[Apply Pilot] 第一轮：关键词匹配');
     fields.forEach((element, index) => {
       const match = matchFieldByKeywords(element);
       if (match && match.confidence !== 'low' && profileData[match.profileKey]) {
@@ -78,7 +79,9 @@
         });
       }
     });
+    // console.log(matchResults);
 
+    console.log('[Apply Pilot] 第二轮：按历史学习到的线索精确复用 commonAnswers');
     // 第二轮：按历史学习到的线索精确复用 commonAnswers
     const stillForLLM = [];
     for (const item of unmatchedForLLM) {
@@ -95,9 +98,12 @@
       }
     }
     unmatchedForLLM = stillForLLM;
+    // console.log(unmatchedForLLM);
 
+    // console.log('[Apply Pilot] 第三轮：LLM 匹配（如果启用）');
     // 第三轮：LLM 匹配（如果启用）
     if (options.useLLM && unmatchedForLLM.length > 0) {
+      console.log('[Apply Pilot] 第三轮：LLM 匹配（启用）');
       showNotification(I18n.t('content.notif.aiAnalyzing'), 'info');
       const llmMapping = await llmMatchFields(
         unmatchedForLLM.map(f => ({
@@ -117,6 +123,27 @@
           matchResults[originalIdx].source = 'llm';
         }
       }
+
+      // 第四轮：对仍未匹配的 textarea，批量调用 LLM 生成开放式回答
+      const openEndedFields = unmatchedForLLM
+        .filter(f => !matchResults[f.index].value && f.tagName === 'textarea')
+        .map(f => ({ ...f, question: pickLearnedLabel(f.clues) || f.clues.join(' ') }))
+        .filter(f => f.question);
+      if (openEndedFields.length > 0) {
+        console.log('[Apply Pilot] 第四轮：LLM 批量生成开放式回答');
+        const answers = await llmGenerateAnswers(
+          openEndedFields.map(f => f.question),
+          profileData
+        );
+        for (const [i, answer] of Object.entries(answers)) {
+          const field = openEndedFields[parseInt(i)];
+          if (field && answer) {
+            matchResults[field.index].value = answer;
+            matchResults[field.index].confidence = 'medium';
+            matchResults[field.index].source = 'llm-generated';
+          }
+        }
+      }
     }
 
     // 统计
@@ -126,6 +153,8 @@
       I18n.t('content.notif.matchDone', { matched: matched.length, unmatched: unmatched.length }),
       matched.length > 0 ? 'success' : 'warning'
     );
+    // console.log(matched);
+    // console.log(unmatched);
 
     // 显示覆盖层
     showOverlay();
