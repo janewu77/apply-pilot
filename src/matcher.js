@@ -47,7 +47,7 @@ const FIELD_KEYWORDS = {
 
   // 地址
   'address.street': {
-    keywords: ['street', 'address line', 'street address', '街道', 'straße', 'adresse'],
+    keywords: ['street', 'address line', 'street address', '街道', 'straße', 'strasse', 'adresse'],
     priority: 8,
   },
   'address.city': {
@@ -103,7 +103,12 @@ const FIELD_KEYWORDS = {
     priority: 7,
   },
   'work.salaryExpectation': {
-    keywords: ['salary', 'salary expectation', 'expected salary', 'compensation', '期望薪资', 'gehaltsvorstellung'],
+    keywords: [
+      'salary', 'salary expectation', 'expected salary', 'compensation',
+      'desired pay', 'desired salary', 'expected pay', 'target salary', 'pay expectation',
+      '期望薪资', '期望工资', '薪资期望',
+      'gehaltsvorstellung', 'wunschgehalt', 'gehaltswunsch',
+    ],
     priority: 7,
   },
   'work.willingToRelocate': {
@@ -119,7 +124,7 @@ const FIELD_KEYWORDS = {
     priority: 8,
   },
   'work.startDate': {
-    keywords: ['start date', 'earliest start', 'available from', '入职日期', 'eintrittsdatum', 'frühester eintrittstermin'],
+    keywords: ['start date', 'earliest start', 'available from', 'date available', 'availability date', 'available start', '入职日期', 'eintrittsdatum', 'frühester eintrittstermin'],
     priority: 7,
   },
 
@@ -170,28 +175,42 @@ function extractFieldClues(element) {
   }
 
   // 3. name / id 属性
+  // 把 `.` 也视为分隔符（兼容 "streetAddress.value" 这类框架内部命名）
+  // 并剥掉末尾常见的框架后缀（.value / .input）
+  const cleanAttr = (str) =>
+    str
+      .replace(/\.(value|input|field|control)$/i, '') // 去掉无语义后缀
+      .replace(/[._\-\[\]]/g, ' ');                  // 分隔符统一转空格
   if (element.name) {
-    clues.push(element.name.replace(/[_\-\[\]]/g, ' '));
+    clues.push(cleanAttr(element.name));
   }
   if (element.id) {
-    clues.push(element.id.replace(/[_\-\[\]]/g, ' '));
+    clues.push(cleanAttr(element.id));
   }
+
+  // 标签文字清洗：剥掉必填标记（* ＊ (required) 等），还原纯语义文本
+  const cleanLabel = (str) =>
+    str
+      .replace(/\s*[*＊]\s*$/, '')
+      .replace(/\s*\(required\)\s*$/i, '')
+      .replace(/\s*（必填）\s*$/, '')
+      .trim();
 
   // 4. 关联的 <label>
   if (element.id) {
     const label = document.querySelector(`label[for="${element.id}"]`);
-    if (label) clues.push(label.textContent.trim());
+    if (label) clues.push(cleanLabel(label.textContent.trim()));
   }
   // 也检查父级 label
   const parentLabel = element.closest('label');
   if (parentLabel) {
-    clues.push(parentLabel.textContent.trim());
+    clues.push(cleanLabel(parentLabel.textContent.trim()));
   }
 
   // 5. 上一个兄弟节点（很多表单把标签放在输入框前面）
   const prev = element.previousElementSibling;
   if (prev && (prev.tagName === 'LABEL' || prev.tagName === 'SPAN' || prev.tagName === 'DIV')) {
-    clues.push(prev.textContent.trim());
+    clues.push(cleanLabel(prev.textContent.trim()));
   }
 
   // 6. 父容器中的文本（限制范围，避免拿到太多无关文字）
@@ -199,7 +218,7 @@ function extractFieldClues(element) {
   if (parent) {
     const parentText = Array.from(parent.childNodes)
       .filter(n => n.nodeType === Node.TEXT_NODE || (n.nodeType === Node.ELEMENT_NODE && ['LABEL', 'SPAN', 'P', 'DIV'].includes(n.tagName) && n !== element))
-      .map(n => n.textContent.trim())
+      .map(n => cleanLabel(n.textContent.trim()))
       .filter(t => t.length > 0 && t.length < 100)
       .join(' ');
     if (parentText) clues.push(parentText);

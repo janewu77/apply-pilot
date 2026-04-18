@@ -85,16 +85,34 @@ const DEFAULT_PROFILE = {
 };
 
 /**
- * 从线索数组生成稳定签名，用于去重与复用匹配
- * @param {string[]} clues
- * @returns {string}
+ * 从表单字段的线索数组生成一个稳定的字符串签名。
+ *
+ * 「线索」是从 DOM 元素上提取的描述性文本，例如 label 文字、name 属性、
+ * placeholder、aria-label 等。同一个字段在不同页面上这些文本可能顺序不同、
+ * 大小写不同，但语义相同。本函数通过标准化 + 排序，把所有等价的线索组合
+ * 都映射到同一个签名，从而让历史学习系统能跨页面可靠地识别「同一道题」。
+ *
+ * 处理流程：
+ *  1. 每条线索转为字符串、全小写、去首尾空白、把内部连续空白压成单个空格
+ *  2. 过滤掉空字符串，避免空值干扰签名
+ *  3. 按字典序排序，消除顺序差异
+ *  4. 用 Unicode Unit Separator（U+241E）拼接，该字符极少出现在正常文本中，
+ *     不会与线索内容冲突
+ *
+ * 示例：
+ *  cluesSignatureFromClues(["Email Address", "email"])
+ *  cluesSignatureFromClues(["email", "Email Address"])
+ *  // 两者均返回 "email\u241eemail address"
+ *
+ * @param {string[]} clues - 从 DOM 元素提取的线索数组（label/name/placeholder 等）
+ * @returns {string} 标准化后的签名字符串，可直接用作存储 key 或比对依据
  */
 function cluesSignatureFromClues(clues) {
   const norm = (clues || [])
     .map((c) => String(c).toLowerCase().trim().replace(/\s+/g, ' '))
     .filter(Boolean)
     .sort();
-  return norm.join('\u241e'); // unit separator between clues
+  return norm.join('\u241e'); // U+241E Unit Separator，用作线索间的分隔符
 }
 
 /**
