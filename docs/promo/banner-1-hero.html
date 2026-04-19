@@ -200,11 +200,10 @@
   }
   .logo-icon {
     width: 44px; height: 44px;
-    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
     border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
+    overflow: hidden;
   }
+  .logo-icon img { width: 100%; height: 100%; object-fit: cover; }
   .logo-text { font-size: 18px; font-weight: 700; color: #fff; }
 </style>
 </head>
@@ -213,7 +212,7 @@
   <div class="bg-glow2"></div>
 
   <div class="logo-area">
-    <div class="logo-icon">🚀</div>
+    <div class="logo-icon"><img src="../../src/icons/icon128.png" alt="Apply Pilot"></div>
     <div class="logo-text">Apply Pilot</div>
   </div>
 
