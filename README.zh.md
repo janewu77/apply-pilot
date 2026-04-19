@@ -1,8 +1,7 @@
 # Apply Pilot
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.1.2-blue.svg)](src/manifest.json)
-[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-yellow.svg)](https://developer.chrome.com/docs/extensions/)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bnkbkigjaohilpniahlmaaiobpbbfdef.svg)](https://chromewebstore.google.com/detail/apply-pilot/bnkbkigjaohilpniahlmaaiobpbbfdef)
 
 **智能求职表单自动填充助手** — [English](README.md)
 
@@ -25,6 +24,14 @@
 ![Apply Pilot 工作流程](docs/promo/2-how-it-works.png)
 
 ## 安装步骤
+
+### 方式一：Chrome 应用商店安装（推荐）
+
+直接从 Chrome 应用商店一键安装，无需任何配置：
+
+**[→ 在 Chrome 中安装 Apply Pilot](https://chromewebstore.google.com/detail/apply-pilot/bnkbkigjaohilpniahlmaaiobpbbfdef)**
+
+### 方式二：从源码加载（适合开发者）
 
 1. 打开 Chrome，访问 `chrome://extensions/`
 2. 打开右上角 **开发者模式**

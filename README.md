@@ -1,8 +1,7 @@
 # Apply Pilot
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.1.2-blue.svg)](src/manifest.json)
-[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-yellow.svg)](https://developer.chrome.com/docs/extensions/)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bnkbkigjaohilpniahlmaaiobpbbfdef.svg)](https://chromewebstore.google.com/detail/apply-pilot/bnkbkigjaohilpniahlmaaiobpbbfdef)
 
 **Smart Job Application Form Auto-Filler** — [中文版](README.zh.md)
 
@@ -25,6 +24,14 @@ Supports forms in English · Deutsch · 中文. Works on most job sites. No acco
 ![How Apply Pilot works](docs/promo/2-how-it-works.png)
 
 ## Installation
+
+### Option 1: Chrome Web Store (recommended)
+
+Install directly from the Chrome Web Store — no setup required:
+
+**[→ Add Apply Pilot to Chrome](https://chromewebstore.google.com/detail/apply-pilot/bnkbkigjaohilpniahlmaaiobpbbfdef)**
+
+### Option 2: Load from source (for developers)
 
 1. Open Chrome and go to `chrome://extensions/`
 2. Enable **Developer mode** (top-right toggle)
