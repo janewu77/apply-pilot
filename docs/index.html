@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apply Pilot — Smart Job Application Form Auto-Filler</title>
+  <meta name="description" content="Fill job application forms instantly. Save your profile once, fill any form with one click. Supports AI matching, auto-learning, and works in English, German & Chinese." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:        #8b5cf6;
+      --purple-dim:    rgba(139,92,246,0.14);
+      --purple-border: rgba(139,92,246,0.35);
+      --blue:          #3b82f6;
+      --green:         #22c55e;
+      --yellow:        #eab308;
+      --bg:            #0f0f1a;
+      --bg-card:       rgba(255,255,255,0.04);
+      --border:        rgba(255,255,255,0.09);
+      --text:          #f1f5f9;
+      --text-muted:    #94a3b8;
+      --text-dim:      #64748b;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 16px;
+      overflow-x: hidden;
+    }
+
+    /* ── Nav ─────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 48px;
+      background: rgba(15,15,26,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo img { width: 30px; height: 30px; border-radius: 8px; }
+    .nav-logo-text { font-size: 17px; font-weight: 700; color: var(--text); }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 32px;
+    }
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none;
+      font-size: 14px; transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--purple), #6d28d9);
+      color: #fff; font-size: 14px; font-weight: 600;
+      padding: 10px 20px; border-radius: 10px;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: opacity .2s, transform .15s;
+    }
+    .btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border);
+      color: var(--text); font-size: 14px; font-weight: 500;
+      padding: 10px 20px; border-radius: 10px;
+      text-decoration: none; transition: background .2s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+
+    /* ── Section wrapper ─────────────────────────────── */
+    .section-wrap {
+      max-width: 1200px; margin: 0 auto;
+      padding: 96px 48px;
+    }
+
+    .eyebrow {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--purple); margin-bottom: 14px;
+    }
+
+    h2 {
+      font-size: 42px; font-weight: 700;
+      letter-spacing: -.5px; line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .section-lead {
+      font-size: 17px; color: var(--text-muted);
+      max-width: 540px; margin-bottom: 60px;
+      line-height: 1.7;
+    }
+
+    /* ── Hero ────────────────────────────────────────── */
+    #hero { position: relative; overflow: hidden; }
+
+    .hero-glow {
+      position: absolute; border-radius: 50%; pointer-events: none;
+    }
+    .hero-glow-1 {
+      width: 860px; height: 860px;
+      background: radial-gradient(circle, rgba(139,92,246,.13) 0%, transparent 65%);
+      top: -260px; right: -220px;
+    }
+    .hero-glow-2 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(59,130,246,.09) 0%, transparent 65%);
+      bottom: -180px; left: -120px;
+    }
+
+    .hero-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 104px 48px 96px;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      gap: 64px; position: relative;
+    }
+
+    .hero-left { flex: 1; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--purple-dim);
+      border: 1px solid var(--purple-border);
+      border-radius: 100px; padding: 6px 16px;
+      font-size: 13px; color: #c4b5fd;
+      margin-bottom: 28px; letter-spacing: .3px;
+    }
+    .badge-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--purple);
+      box-shadow: 0 0 8px var(--purple);
+    }
+
+    h1 {
+      font-size: 60px; font-weight: 700;
+      line-height: 1.1; letter-spacing: -1.5px;
+      margin-bottom: 22px;
+    }
+    h1 .muted { color: var(--text-muted); }
+    h1 .hi {
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-sub {
+      font-size: 19px; color: var(--text-muted);
+      line-height: 1.65; margin-bottom: 36px;
+      max-width: 500px;
+    }
+    .hero-sub code {
+      font-size: 15px;
+      background: rgba(255,255,255,0.08);
+      padding: 2px 7px; border-radius: 5px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: #c4b5fd;
+    }
+
+    .hero-cta { display: flex; align-items: center; gap: 14px; margin-bottom: 40px; }
+    .btn-primary.lg { font-size: 15px; padding: 13px 24px; border-radius: 12px; }
+    .btn-secondary.lg { font-size: 15px; padding: 13px 24px; border-radius: 12px; }
+
+    .hero-trust {
+      display: flex; flex-wrap: wrap; gap: 20px;
+    }
+    .hero-trust-item {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 13px; color: var(--text-dim);
+    }
+    .hero-trust-item .ck { color: var(--green); }
+
+    /* Hero mock browser */
+    .hero-right { flex-shrink: 0; width: 460px; }
+
+    .mock-browser {
+      background: #141426;
+      border: 1px solid rgba(255,255,255,0.11);
+      border-radius: 18px; overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,.55),
+                  0 0 0 1px rgba(139,92,246,.08),
+                  inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .mock-bar {
+      display: flex; align-items: center; gap: 6px;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: rgba(0,0,0,.22);
+    }
+    .m-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .m-dot.r { background: #ff5f57; }
+    .m-dot.y { background: #ffbd2e; }
+    .m-dot.g { background: #28c840; }
+    .mock-url {
+      margin-left: 10px; flex: 1;
+      background: rgba(255,255,255,0.06);
+      border-radius: 6px; padding: 4px 12px;
+      font-size: 12px; color: var(--text-dim);
+    }
+    .mock-ext {
+      width: 24px; height: 24px; border-radius: 6px;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; margin-left: 8px; flex-shrink: 0;
+    }
+
+    .mock-body { padding: 20px 22px 22px; }
+
+    .mock-job-hd {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 18px; padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .mock-logo {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, #0f766e, #0891b2);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 13px; color: #fff; flex-shrink: 0;
+    }
+    .mock-jt { font-size: 13px; font-weight: 600; color: #e2e8f0; }
+    .mock-js { font-size: 11px; color: var(--text-dim); }
+
+    .mock-f { margin-bottom: 10px; }
+    .mock-fl { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }
+    .mock-fi {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 7px; padding: 8px 11px;
+      font-size: 13px; color: #e2e8f0;
+    }
+    .mock-fi.fi-g { border-color: rgba(34,197,94,.38);  background: rgba(34,197,94,.04); }
+    .mock-fi.fi-b { border-color: rgba(59,130,246,.40); background: rgba(59,130,246,.04); }
+    .mock-fi.fi-y { border-color: rgba(234,179,8,.32);  background: rgba(234,179,8,.03); }
+    .mock-st { font-size: 10px; font-weight: 700; }
+    .mock-st.sg { color: var(--green); }
+    .mock-st.sb { color: var(--blue); }
+    .mock-st.sy { color: var(--yellow); }
+
+    .mock-bar2 {
+      margin-top: 14px;
+      background: rgba(139,92,246,.08);
+      border: 1px solid rgba(139,92,246,.2);
+      border-radius: 9px; padding: 9px 11px;
+      display: flex; gap: 7px;
+    }
+    .mock-btn2 {
+      flex: 1; border-radius: 6px; padding: 6px 8px;
+      font-size: 10px; font-weight: 600; text-align: center;
+    }
+    .mock-btn2.primary {
+      background: linear-gradient(135deg, var(--purple), #6d28d9);
+      color: #fff;
+    }
+    .mock-btn2.ghost {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-muted); font-weight: 500;
+    }
+
+    /* ── Divider ──────────────────────────────────────── */
+    .divider { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
+    .divider hr { border: none; border-top: 1px solid var(--border); }
+
+    /* ── How it works ─────────────────────────────────── */
+    #how { text-align: center; }
+    #how .section-lead { margin-left: auto; margin-right: auto; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      position: relative;
+      max-width: 860px; margin: 0 auto;
+    }
+    .step {
+      padding: 40px 28px; position: relative;
+    }
+    .step:not(:last-child)::after {
+      content: '→';
+      position: absolute; right: -10px; top: 52px;
+      color: var(--purple); font-size: 20px; opacity: .45;
+    }
+
+    .step-emoji { font-size: 36px; margin-bottom: 18px; }
+
+    .step-num {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--purple-dim);
+      border: 1px solid var(--purple-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 700; color: #c4b5fd;
+      margin: 0 auto 18px;
+    }
+    .step h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+    .step p  { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+    /* ── Features ─────────────────────────────────────── */
+    #features { padding-top: 40px; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px; margin-top: 12px;
+    }
+
+    .fcard {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px; padding: 30px 32px;
+      transition: border-color .2s;
+    }
+    .fcard:hover { border-color: var(--purple-border); }
+    .fcard.wide { grid-column: 1 / -1; }
+
+    .fi { font-size: 30px; margin-bottom: 16px; }
+
+    .fcard h3 {
+      font-size: 18px; font-weight: 700;
+      margin-bottom: 10px; line-height: 1.3;
+    }
+    .fcard p { font-size: 14px; color: var(--text-muted); line-height: 1.75; }
+
+    .badge-opt {
+      font-size: 11px;
+      background: var(--purple-dim);
+      border: 1px solid var(--purple-border);
+      border-radius: 100px; padding: 2px 10px;
+      color: #c4b5fd; font-weight: 500;
+      vertical-align: middle; margin-left: 8px;
+    }
+
+    /* colour demo inside feature card */
+    .cdemo { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+    .cdemo-row {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 8px; padding: 9px 13px;
+      border: 1px solid; font-size: 13px;
+    }
+    .cdemo-row.cg { border-color: rgba(34,197,94,.28); }
+    .cdemo-row.cb { border-color: rgba(59,130,246,.28); }
+    .cdemo-row.cy { border-color: rgba(234,179,8,.22);  }
+    .cdemo-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .cdemo-label { flex: 1; color: var(--text-muted); }
+    .cdemo-status { font-size: 11px; font-weight: 700; margin-left: auto; }
+
+    /* lang pills */
+    .lang-pills {
+      display: flex; gap: 14px; margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .lang-pill {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 100px; padding: 11px 22px;
+      font-size: 15px; font-weight: 500;
+    }
+    .lflag { font-size: 20px; }
+
+    /* ── Privacy ──────────────────────────────────────── */
+    #privacy { padding-top: 40px; }
+
+    .privacy-box {
+      background: linear-gradient(135deg,
+        rgba(139,92,246,.07), rgba(59,130,246,.04));
+      border: 1px solid var(--purple-border);
+      border-radius: 24px; padding: 72px 80px;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .privacy-box::before {
+      content: '';
+      position: absolute; width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,92,246,.1) 0%, transparent 65%);
+      top: -150px; right: -120px; pointer-events: none;
+    }
+
+    .privacy-icon { font-size: 52px; margin-bottom: 18px; position: relative; }
+    .privacy-box h2 { font-size: 38px; margin-bottom: 14px; position: relative; }
+    .privacy-box .lead {
+      font-size: 17px; color: var(--text-muted);
+      max-width: 520px; margin: 0 auto 44px;
+      position: relative;
+    }
+
+    .privacy-points {
+      display: flex; justify-content: center;
+      gap: 32px; flex-wrap: wrap; position: relative;
+    }
+    .pp {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 14px; color: var(--text-muted);
+    }
+    .pp .ck { color: var(--green); font-size: 15px; }
+
+    /* ── CTA ──────────────────────────────────────────── */
+    #cta { text-align: center; }
+
+    .cta-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 24px; padding: 80px;
+      position: relative; overflow: hidden;
+    }
+    .cta-box::before {
+      content: '';
+      position: absolute; width: 700px; height: 700px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,92,246,.07) 0%, transparent 65%);
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      pointer-events: none;
+    }
+
+    .cta-box h2 { font-size: 48px; position: relative; }
+    .cta-box .lead {
+      color: var(--text-muted); font-size: 18px;
+      margin: 16px auto 40px; max-width: 460px;
+      position: relative;
+    }
+    .cta-btns {
+      display: flex; justify-content: center;
+      gap: 16px; position: relative;
+    }
+    .btn-primary.xlg { font-size: 16px; padding: 15px 30px; border-radius: 13px; }
+    .btn-secondary.xlg { font-size: 16px; padding: 15px 30px; border-radius: 13px; }
+
+    /* ── Footer ───────────────────────────────────────── */
+    .footer-wrap {
+      max-width: 1200px; margin: 0 auto;
+      padding: 28px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid var(--border);
+    }
+    .footer-brand {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .footer-brand img { width: 24px; height: 24px; border-radius: 6px; }
+    .footer-brand span { font-size: 13px; color: var(--text-dim); }
+
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a {
+      font-size: 13px; color: var(--text-dim);
+      text-decoration: none; transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--text-muted); }
+
+    /* ── Responsive ───────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 14px 24px; }
+      .nav-links { display: none; }
+      .hero-inner { flex-direction: column; padding: 64px 24px 56px; gap: 48px; }
+      .hero-right { width: 100%; max-width: 460px; }
+      h1 { font-size: 42px; }
+      .section-wrap { padding: 64px 24px; }
+      .steps { grid-template-columns: 1fr; max-width: 380px; }
+      .step:not(:last-child)::after { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+      .fcard.wide { grid-column: 1; }
+      h2 { font-size: 32px; }
+      .privacy-box { padding: 48px 28px; }
+      .cta-box { padding: 48px 24px; }
+      .cta-box h2 { font-size: 36px; }
+      .cta-btns { flex-direction: column; align-items: center; }
+      .footer-wrap { flex-direction: column; gap: 18px; text-align: center; }
+      .divider { padding: 0 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════ NAV ═══════ -->
+<nav>
+  <a href="#" class="nav-logo">
+    <img src="icons/icon128.png" alt="Apply Pilot logo" />
+    <span class="nav-logo-text">Apply Pilot</span>
+  </a>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#privacy">Privacy</a>
+    <a href="https://github.com/janewu77/apply-pilot" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <a href="https://chromewebstore.google.com/detail/apply-pilot/bnkbkigjaohilpniahlmaaiobpbbfdef"
+     target="_blank" rel="noopener" class="btn-primary">
+    Add to Chrome — free
+  </a>
+</nav>
+
+<!-- ═══════ HERO ═══════ -->
+<div id="hero">
+  <div class="hero-glow hero-glow-1"></div>
+  <div class="hero-glow hero-glow-2"></div>
+
+  <div class="hero-inner">
+
+    <!-- Left copy -->
+    <div class="hero-left">
+      <div class="hero-badge">
+        <div class="badge-dot"></div>
+        Chrome Extension · Free · Open Source
+      </div>
+      <h1>
+        Stop retyping<br>
+        the <span class="hi">same info</span><br>
+        <span class="muted">every time.</span>
+      </h1>
+      <p class="hero-sub">
+        Apply Pilot fills job application forms for you — instantly.
+        Save your profile once, then fill any form with one click or
+        <code>Alt+F</code>.
+      </p>
+      <div class="hero-cta">
+        <a href="https://chromewebstore.google.com/detail/apply-pilot/bnkbkigjaohilpniahlmaaiobpbbfdef"
+           target="_blank" rel="noopener" class="btn-primary lg">
+          🚀 Add to Chrome — it's free
+        </a>
+        <a href="https://github.com/janewu77/apply-pilot"
+           target="_blank" rel="noopener" class="btn-secondary lg">
+          View on GitHub ↗
+        </a>
+      </div>
+      <div class="hero-trust">
+        <div class="hero-trust-item"><span class="ck">✓</span> No account needed</div>
+        <div class="hero-trust-item"><span class="ck">✓</span> No data collected</div>
+        <div class="hero-trust-item"><span class="ck">✓</span> 100% local storage</div>
+      </div>
+    </div>
+
+    <!-- Right mock browser -->
+    <div class="hero-right">
+      <div class="mock-browser">
+
+        <div class="mock-bar">
+          <div class="m-dot r"></div>
+          <div class="m-dot y"></div>
+          <div class="m-dot g"></div>
+          <div class="mock-url">jobs.example.com/apply · Software Engineer</div>
+          <div class="mock-ext">🚀</div>
+        </div>
+
+        <div class="mock-body">
+          <div class="mock-job-hd">
+            <div class="mock-logo">SC</div>
+            <div>
+              <div class="mock-jt">Software Engineer — Backend</div>
+              <div class="mock-js">StartupCo · Berlin · Full-time</div>
+            </div>
+          </div>
+
+          <div class="mock-f">
+            <div class="mock-fl">Full Name</div>
+            <div class="mock-fi fi-g">
+              <span>Jane Wu</span>
+              <span class="mock-st sg">✓ filled</span>
+            </div>
+          </div>
+          <div class="mock-f">
+            <div class="mock-fl">Email Address</div>
+            <div class="mock-fi fi-g">
+              <span>jane@example.com</span>
+              <span class="mock-st sg">✓ filled</span>
+            </div>
+          </div>
+          <div class="mock-f">
+            <div class="mock-fl">LinkedIn Profile</div>
+            <div class="mock-fi fi-b">
+              <span>linkedin.com/in/jane</span>
+              <span class="mock-st sb">→ matched</span>
+            </div>
+          </div>
+          <div class="mock-f">
+            <div class="mock-fl">Years of Experience</div>
+            <div class="mock-fi fi-b">
+              <span>5 years</span>
+              <span class="mock-st sb">→ matched</span>
+            </div>
+          </div>
+          <div class="mock-f">
+            <div class="mock-fl">Why do you want to join us?</div>
+            <div class="mock-fi fi-y">
+              <span style="color:var(--text-dim)">Type here…</span>
+              <span class="mock-st sy">? manual</span>
+            </div>
+          </div>
+
+          <div class="mock-bar2">
+            <div class="mock-btn2 primary">Fill High-Confidence</div>
+            <div class="mock-btn2 ghost">Fill All</div>
+            <div class="mock-btn2 ghost">Save</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"><hr /></div>
+
+<!-- ═══════ HOW IT WORKS ═══════ -->
+<section id="how">
+  <div class="section-wrap" style="text-align:center;">
+    <p class="eyebrow">How it works</p>
+    <h2>Three steps, zero frustration</h2>
+    <p class="section-lead">
+      No complicated setup. Fill your profile once — Apply Pilot handles
+      the scanning, matching, and filling.
+    </p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-emoji">👤</div>
+        <div class="step-num">1</div>
+        <h3>Save your profile</h3>
+        <p>Enter your personal info, work history, education, links, and Q&amp;A presets once. Everything lives locally in your browser.</p>
+      </div>
+      <div class="step">
+        <div class="step-emoji">🔍</div>
+        <div class="step-num">2</div>
+        <h3>Scan the form</h3>
+        <p>Open any job application page. Click the 🚀 icon or press <strong>Alt+F</strong>. Apply Pilot scans and matches fields in seconds.</p>
+      </div>
+      <div class="step">
+        <div class="step-emoji">✅</div>
+        <div class="step-num">3</div>
+        <h3>Fill and submit</h3>
+        <p>Review colour-coded labels, click <strong>Fill High-Confidence</strong>, check the results, and submit. You stay in control.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><hr /></div>
+
+<!-- ═══════ FEATURES ═══════ -->
+<section id="features">
+  <div class="section-wrap">
+    <p class="eyebrow">Features</p>
+    <h2>Everything you need to apply faster</h2>
+    <p class="section-lead">Keyword matching, AI fallback, auto-learning, and always private.</p>
+
+    <div class="features-grid">
+
+      <!-- Colour labels -->
+      <div class="fcard">
+        <div class="fi">🎨</div>
+        <h3>Colour-coded labels</h3>
+        <p>Every field gets a status label so you know exactly what happened at a glance — no guessing, no surprises.</p>
+        <div class="cdemo">
+          <div class="cdemo-row cg">
+            <div class="cdemo-dot" style="background:var(--green)"></div>
+            <span class="cdemo-label">Full Name — Jane Wu</span>
+            <span class="cdemo-status" style="color:var(--green)">🟢 Filled</span>
+          </div>
+          <div class="cdemo-row cb">
+            <div class="cdemo-dot" style="background:var(--blue)"></div>
+            <span class="cdemo-label">LinkedIn Profile</span>
+            <span class="cdemo-status" style="color:var(--blue)">🔵 Matched</span>
+          </div>
+          <div class="cdemo-row cy">
+            <div class="cdemo-dot" style="background:var(--yellow)"></div>
+            <span class="cdemo-label">Why do you want to join?</span>
+            <span class="cdemo-status" style="color:var(--yellow)">🟡 Manual</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Keyword matching -->
+      <div class="fcard">
+        <div class="fi">⚡</div>
+        <h3>Instant keyword matching</h3>
+        <p>Apply Pilot reads field labels, placeholders, and names — then maps them to your profile in milliseconds. No API call needed for the common stuff.</p>
+      </div>
+
+      <!-- AI -->
+      <div class="fcard">
+        <div class="fi">🤖</div>
+        <h3>AI semantic matching <span class="badge-opt">optional</span></h3>
+        <p>Connect your own Claude or GPT API key to handle edge-case fields and draft answers to open-ended questions like <em>"Why do you want this role?"</em> Your key stays on your device — nothing is collected.</p>
+      </div>
+
+      <!-- Auto-learning -->
+      <div class="fcard">
+        <div class="fi">📚</div>
+        <h3>Auto-learning</h3>
+        <p>Fill a yellow field manually, click <strong>Save to Presets</strong>, and Apply Pilot remembers it. Hit a similar question next time — it fills automatically. The extension gets smarter with every application.</p>
+      </div>
+
+      <!-- Languages — wide card -->
+      <div class="fcard wide">
+        <div class="fi">🌍</div>
+        <h3>Three languages, one extension</h3>
+        <p>Keyword matching works natively across English, German, and Chinese application forms. Applying in London, Berlin, or Taipei? Apply Pilot reads the form correctly in every language.</p>
+        <div class="lang-pills">
+          <div class="lang-pill"><span class="lflag">🇬🇧</span> English</div>
+          <div class="lang-pill"><span class="lflag">🇩🇪</span> Deutsch</div>
+          <div class="lang-pill"><span class="lflag">🇨🇳</span> 中文</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"><hr /></div>
+
+<!-- ═══════ PRIVACY ═══════ -->
+<section id="privacy">
+  <div class="section-wrap">
+    <div class="privacy-box">
+      <div class="privacy-icon">🔒</div>
+      <h2>Your data never leaves your device</h2>
+      <p class="lead">
+        Apply Pilot stores everything in Chrome's local storage.
+        No accounts, no servers, no tracking. Your profile is yours.
+      </p>
+      <div class="privacy-points">
+        <div class="pp"><span class="ck">✓</span> All data stored locally</div>
+        <div class="pp"><span class="ck">✓</span> API key stays on your device</div>
+        <div class="pp"><span class="ck">✓</span> Export &amp; reset anytime</div>
+        <div class="pp"><span class="ck">✓</span> No account required</div>
+        <div class="pp"><span class="ck">✓</span> Nothing submitted automatically</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ CTA ═══════ -->
+<section id="cta">
+  <div class="section-wrap">
+    <div class="cta-box">
+      <h2>Ready to apply faster?</h2>
+      <p class="lead">
+        Stop retyping your name and email on every form.
+        Install Apply Pilot and get back to what matters.
+      </p>
+      <div class="cta-btns">
+        <a href="https://chromewebstore.google.com/detail/apply-pilot/bnkbkigjaohilpniahlmaaiobpbbfdef"
+           target="_blank" rel="noopener" class="btn-primary xlg">
+          🚀 Add to Chrome — it's free
+        </a>
+        <a href="https://github.com/janewu77/apply-pilot"
+           target="_blank" rel="noopener" class="btn-secondary xlg">
+          View source on GitHub ↗
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer>
+  <div class="footer-wrap">
+    <div class="footer-brand">
+      <img src="icons/icon128.png" alt="Apply Pilot" />
+      <span>Apply Pilot · MIT License</span>
+    </div>
+    <div class="footer-links">
+      <a href="https://chromewebstore.google.com/detail/apply-pilot/bnkbkigjaohilpniahlmaaiobpbbfdef"
+         target="_blank" rel="noopener">Chrome Web Store</a>
+      <a href="https://github.com/janewu77/apply-pilot"
+         target="_blank" rel="noopener">GitHub</a>
+      <a href="privacy.html">Privacy Policy</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
