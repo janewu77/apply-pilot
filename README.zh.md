@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bnkbkigjaohilpniahlmaaiobpbbfdef.svg)](https://chromewebstore.google.com/detail/apply-pilot/bnkbkigjaohilpniahlmaaiobpbbfdef)
+[![Website](https://img.shields.io/badge/Website-janewu77.github.io-8b5cf6)](https://janewu77.github.io/apply-pilot/)
 
 **智能求职表单自动填充助手** — [English](README.md)
 
