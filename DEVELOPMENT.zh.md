@@ -41,7 +41,7 @@ apply-pilot/
 ├── example/
 │   ├── apply-pilot-profile-example.json   # 示例档案导出文件（数据格式参考）
 │   └── apply-pilot-qa-example.json        # 示例问答导出文件（数据格式参考）
-├── docs/
+├── materials/
 ├── README.md
 ├── README.zh.md
 ├── DEVELOPMENT.md

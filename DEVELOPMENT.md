@@ -41,7 +41,7 @@ apply-pilot/
 ├── example/
 │   ├── apply-pilot-profile-example.json   # Example profile export (data format reference)
 │   └── apply-pilot-qa-example.json        # Example Q&A export (data format reference)
-├── docs/
+├── materials/
 ├── README.md
 ├── README.zh.md
 ├── DEVELOPMENT.md           # This file

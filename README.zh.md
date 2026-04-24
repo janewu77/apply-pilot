@@ -5,7 +5,7 @@
 
 **智能求职表单自动填充助手** — [English](README.md)
 
-![Apply Pilot — 智能求职表单自动填充助手](docs/promo/1-hero.png)
+![Apply Pilot — 智能求职表单自动填充助手](materials/promo/1-hero.png)
 
 每次求职都要重复填写一样的信息？Apply Pilot 帮你填——一键搞定。
 
@@ -21,7 +21,7 @@
 
 支持英语、德语、中文表单。适用于大多数求职网站。无需注册，不收集任何数据。
 
-![Apply Pilot 工作流程](docs/promo/2-how-it-works.png)
+![Apply Pilot 工作流程](materials/promo/2-how-it-works.png)
 
 ## 安装步骤
 
@@ -115,7 +115,7 @@
 - 🇩🇪 Deutsch
 - 🇨🇳 中文
 
-![Apply Pilot 功能一览](docs/promo/3-features.png)
+![Apply Pilot 功能一览](materials/promo/3-features.png)
 
 ## 数据安全
 
