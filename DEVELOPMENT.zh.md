@@ -38,10 +38,16 @@ apply-pilot/
 │       ├── icon16.png
 │       ├── icon48.png
 │       └── icon128.png
+├── docs/                    # GitHub Pages 根目录 —— 存放网页类内容（隐私政策等）
+│   ├── privacy.html         # 隐私政策页面
+│   └── icons/               # 网页中使用的图标
 ├── example/
 │   ├── apply-pilot-profile-example.json   # 示例档案导出文件（数据格式参考）
 │   └── apply-pilot-qa-example.json        # 示例问答导出文件（数据格式参考）
-├── materials/
+├── materials/               # 应用商店上架与推广用的静态素材（logo、截图、宣传图等）
+│   ├── logo/
+│   ├── screenshots/
+│   └── promo/
 ├── README.md
 ├── README.zh.md
 ├── DEVELOPMENT.md

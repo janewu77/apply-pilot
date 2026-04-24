@@ -38,10 +38,16 @@ apply-pilot/
 │       ├── icon16.png
 │       ├── icon48.png
 │       └── icon128.png
+├── docs/                    # GitHub Pages root — web-facing content (privacy policy, etc.)
+│   ├── privacy.html         # Privacy policy page
+│   └── icons/               # Icons used in web pages
 ├── example/
 │   ├── apply-pilot-profile-example.json   # Example profile export (data format reference)
 │   └── apply-pilot-qa-example.json        # Example Q&A export (data format reference)
-├── materials/
+├── materials/               # Static assets for store listings and promotion (logos, screenshots, promo images)
+│   ├── logo/
+│   ├── screenshots/
+│   └── promo/
 ├── README.md
 ├── README.zh.md
 ├── DEVELOPMENT.md           # This file
