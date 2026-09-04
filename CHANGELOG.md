@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.1] - 2026-09-04
+
+### Changed
+- Update AI defaults to Claude Sonnet 4.6 and GPT-5.6 Luna
+- Add GPT-5.6 Terra as a higher-quality option and retain GPT-4o Mini for legacy compatibility
+- Migrate retired or invalid saved model selections to supported replacements
+- Generate AI answers for unmatched plain text inputs as well as textareas
+
 
 ## [2.1.0] - 2026-04-18
 

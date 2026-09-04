@@ -3,18 +3,41 @@
  * 当关键词匹配失败时，调用 LLM API 做语义理解
  */
 
+// `llm.js` may be injected more than once on the same page, so use `var` for
+// redeclaration-safe shared defaults.
+var DEFAULT_ANTHROPIC_MODEL = 'claude-sonnet-4-6';
+var DEFAULT_OPENAI_MODEL = 'gpt-5.6-luna';
+
+function normalizeLLMModels(settings) {
+  const normalized = { ...settings };
+
+  if (!normalized.model || normalized.model === 'claude-sonnet-4-5-20250514') {
+    normalized.model = DEFAULT_ANTHROPIC_MODEL;
+  }
+
+  if (!normalized.modelOpenAI) {
+    normalized.modelOpenAI = DEFAULT_OPENAI_MODEL;
+  } else if (normalized.modelOpenAI === 'gpt-4o' || normalized.modelOpenAI === 'gpt-4-turbo') {
+    normalized.modelOpenAI = 'gpt-5.6-terra';
+  }
+
+  return normalized;
+}
+
 /**
  * 从 storage 加载 LLM 设置
  */
 async function loadLLMSettings() {
   return new Promise((resolve) => {
     chrome.storage.local.get('applyPilotLLM', (result) => {
-      resolve(result.applyPilotLLM || {
+      resolve(normalizeLLMModels(result.applyPilotLLM || {
         provider: 'anthropic',  // 'anthropic' | 'openai'
         apiKey: '',
-        model: 'claude-sonnet-4-5-20250514',
+        apiKeyOpenAI: '',
+        model: DEFAULT_ANTHROPIC_MODEL,
+        modelOpenAI: DEFAULT_OPENAI_MODEL,
         enabled: false,
-      });
+      }));
     });
   });
 }
@@ -208,7 +231,7 @@ async function callAnthropic(settings, prompt) {
       'anthropic-dangerous-direct-browser-access': 'true',
     },
     body: JSON.stringify({
-      model: settings.model || 'claude-sonnet-4-5-20250514',
+      model: settings.model || DEFAULT_ANTHROPIC_MODEL,
       max_tokens: 1024,
       messages: [{ role: 'user', content: prompt }],
     }),
@@ -223,17 +246,26 @@ async function callAnthropic(settings, prompt) {
 }
 
 async function callOpenAI(settings, prompt) {
+  const model = settings.modelOpenAI || DEFAULT_OPENAI_MODEL;
+  const requestBody = {
+    model,
+    messages: [{ role: 'user', content: prompt }],
+  };
+
+  if (model.startsWith('gpt-5.6')) {
+    requestBody.reasoning_effort = 'none';
+    requestBody.max_completion_tokens = 1024;
+  } else {
+    requestBody.max_tokens = 1024;
+  }
+
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${settings.apiKeyOpenAI}`,
     },
-    body: JSON.stringify({
-      model: settings.modelOpenAI || 'gpt-4o-mini',
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 1024,
-    }),
+    body: JSON.stringify(requestBody),
   });
 
   if (!response.ok) {

@@ -5,6 +5,41 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
 
+  const DEFAULT_ANTHROPIC_MODEL = 'claude-sonnet-4-6';
+  const DEFAULT_OPENAI_MODEL = 'gpt-5.6-luna';
+
+  function normalizeLLMModels(settings) {
+    const normalized = { ...settings };
+
+    if (!normalized.model || normalized.model === 'claude-sonnet-4-5-20250514') {
+      normalized.model = DEFAULT_ANTHROPIC_MODEL;
+    }
+
+    if (!normalized.modelOpenAI) {
+      normalized.modelOpenAI = DEFAULT_OPENAI_MODEL;
+    } else if (normalized.modelOpenAI === 'gpt-4o' || normalized.modelOpenAI === 'gpt-4-turbo') {
+      normalized.modelOpenAI = 'gpt-5.6-terra';
+    }
+
+    return normalized;
+  }
+
+  function buildOpenAIChatRequest(model, prompt, maxTokens) {
+    const request = {
+      model,
+      messages: [{ role: 'user', content: prompt }],
+    };
+
+    if (model.startsWith('gpt-5.6')) {
+      request.reasoning_effort = 'none';
+      request.max_completion_tokens = maxTokens;
+    } else {
+      request.max_tokens = maxTokens;
+    }
+
+    return request;
+  }
+
   // ========== Language init ==========
   await I18n.init();
   applyLangUI(I18n.currentLang);
@@ -262,14 +297,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   function loadLLMFromStorage() {
     return new Promise(resolve => {
       chrome.storage.local.get('applyPilotLLM', result => {
-        resolve(result.applyPilotLLM || {
+        resolve(normalizeLLMModels(result.applyPilotLLM || {
           provider: 'anthropic',
           apiKey: '',
           apiKeyOpenAI: '',
-          model: 'claude-sonnet-4-5-20250514',
-          modelOpenAI: 'gpt-4o-mini',
+          model: DEFAULT_ANTHROPIC_MODEL,
+          modelOpenAI: DEFAULT_OPENAI_MODEL,
           enabled: false,
-        });
+        }));
       });
     });
   }
@@ -303,9 +338,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById(`config-${provider}`).style.display = 'block';
 
     document.getElementById('anthropicKey').value = settings.apiKey || '';
-    document.getElementById('anthropicModel').value = settings.model || 'claude-sonnet-4-5-20250514';
+    document.getElementById('anthropicModel').value = settings.model || DEFAULT_ANTHROPIC_MODEL;
     document.getElementById('openaiKey').value = settings.apiKeyOpenAI || '';
-    document.getElementById('openaiModel').value = settings.modelOpenAI || 'gpt-4o-mini';
+    document.getElementById('openaiModel').value = settings.modelOpenAI || DEFAULT_OPENAI_MODEL;
   }
 
   function collectFormData() {
@@ -399,11 +434,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${apiKey}`,
           },
-          body: JSON.stringify({
-            model: model,
-            messages: [{ role: 'user', content: 'Say "OK"' }],
-            max_tokens: 10,
-          }),
+          body: JSON.stringify(buildOpenAIChatRequest(model, 'Say "OK"', 10)),
         });
       }
 
@@ -790,11 +821,11 @@ Respond with ONLY the JSON object, no other text.`;
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`,
         },
-        body: JSON.stringify({
+        body: JSON.stringify(buildOpenAIChatRequest(
           model,
-          messages: [{ role: 'user', content: extractionPrompt + '\n\nDOCUMENT:\n' + truncated }],
-          max_tokens: 2048,
-        }),
+          extractionPrompt + '\n\nDOCUMENT:\n' + truncated,
+          2048
+        )),
       });
 
       if (!resp.ok) {

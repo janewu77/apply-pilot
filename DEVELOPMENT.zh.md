@@ -106,7 +106,7 @@ chrome.storage.local.get('applyPilotProfile')
 
 // LLM 设置
 chrome.storage.local.get('applyPilotLLM')
-// { provider, apiKey, apiKeyOpenAI, model, enabled }
+// { provider, apiKey, apiKeyOpenAI, model, modelOpenAI, enabled }
 ```
 
 ## React / Vue 兼容性处理

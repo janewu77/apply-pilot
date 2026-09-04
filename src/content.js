@@ -124,9 +124,13 @@
         }
       }
 
-      // 第四轮：对仍未匹配的 textarea，批量调用 LLM 生成开放式回答
+      // 第四轮：对仍未匹配的多行或普通文本输入框，批量调用 LLM 生成开放式回答
       const openEndedFields = unmatchedForLLM
-        .filter(f => !matchResults[f.index].value && f.tagName === 'textarea')
+        .filter(f => {
+          const isTextControl = f.tagName === 'textarea' ||
+            (f.tagName === 'input' && f.type === 'text');
+          return !matchResults[f.index].value && isTextControl;
+        })
         .map(f => ({ ...f, question: pickLearnedLabel(f.clues) || f.clues.join(' ') }))
         .filter(f => f.question);
       if (openEndedFields.length > 0) {

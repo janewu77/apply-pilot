@@ -141,12 +141,11 @@ const TRANSLATIONS = {
     'options.llm.modelLabel':     'Model',
     'options.llm.testBtn':        '🔌 Test Connection',
     // Model options
-    'options.llm.claudeSonnet45': 'Claude Sonnet 4.5 (Recommended)',
     'options.llm.claudeHaiku45':  'Claude Haiku 4.5 (Faster & cheaper)',
-    'options.llm.claudeSonnet46': 'Claude Sonnet 4.6',
-    'options.llm.gpt4oMini':      'GPT-4o Mini (Recommended, cheap)',
-    'options.llm.gpt4o':          'GPT-4o (More capable)',
-    'options.llm.gpt4turbo':      'GPT-4 Turbo',
+    'options.llm.claudeSonnet46': 'Claude Sonnet 4.6 (Recommended)',
+    'options.llm.gpt56Luna':      'GPT-5.6 Luna (Recommended, efficient)',
+    'options.llm.gpt56Terra':     'GPT-5.6 Terra (Higher quality)',
+    'options.llm.gpt4oMini':      'GPT-4o Mini (Legacy compatibility)',
     // Test status
     'options.llm.testing':        '⏳ Testing connection...',
     'options.llm.noApiKey':       '❌ Please enter your API Key first',
@@ -387,12 +386,11 @@ const TRANSLATIONS = {
     'options.llm.modelLabel':     '模型',
     'options.llm.testBtn':        '🔌 测试连接',
     // Model options
-    'options.llm.claudeSonnet45': 'Claude Sonnet 4.5 (推荐)',
     'options.llm.claudeHaiku45':  'Claude Haiku 4.5 (更快更便宜)',
-    'options.llm.claudeSonnet46': 'Claude Sonnet 4.6',
-    'options.llm.gpt4oMini':      'GPT-4o Mini (推荐, 便宜)',
-    'options.llm.gpt4o':          'GPT-4o (更强)',
-    'options.llm.gpt4turbo':      'GPT-4 Turbo',
+    'options.llm.claudeSonnet46': 'Claude Sonnet 4.6 (推荐)',
+    'options.llm.gpt56Luna':      'GPT-5.6 Luna (推荐，高效)',
+    'options.llm.gpt56Terra':     'GPT-5.6 Terra (更高质量)',
+    'options.llm.gpt4oMini':      'GPT-4o Mini (旧版兼容)',
     // Test status
     'options.llm.testing':        '⏳ 正在测试连接...',
     'options.llm.noApiKey':       '❌ 请先输入 API Key',
