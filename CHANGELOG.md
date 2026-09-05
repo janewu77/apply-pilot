@@ -7,60 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.3] - 2026-09-05
+
+No additional user-facing changes since 2.2.2.
+
 ## [2.2.2] - 2026-09-05
 
-### Changed
-- Release 2.2.0 with local Ollama provider support.
-- Release 2.1.1 with updated AI model defaults and broader open-ended filling.
-- For google search
-- Improve landing page SEO with icons, sitemap, and structured data
-- Add GitHub Pages website badge (EN/ZH)
-- Add OG cover image and meta tags for social preview
-- Add product landing page (index.html)
-- Document docs/ and materials/ layout in DEVELOPMENT tree
-- Materials/ for promo, screenshots, logo, store listing
-- Move privacy policy HTML back to docs/
-- Move privacy policy HTML from docs/ to pages/
-- Add Chrome Web Store badge and recommended install path to READMEs
-- Refresh hero/features tiles and add 1400x560 marquee
-- Add promo screenshots and marketing assets
-## [2.2.1] - 2026-09-05
+### Fixed
+
+- Prevent nearby labels, such as city names, from overriding a field's own label, input type, or autocomplete information
+- Prevent short keywords such as `ort` and `tel` from matching unrelated words
+- Improve recognition of camelCase field names and autocomplete values with section or contact prefixes
 
 ### Changed
-- Release 2.2.0 with local Ollama provider support.
-- Release 2.1.1 with updated AI model defaults and broader open-ended filling.
-- For google search
-- Improve landing page SEO with icons, sitemap, and structured data
-- Add GitHub Pages website badge (EN/ZH)
-- Add OG cover image and meta tags for social preview
-- Add product landing page (index.html)
-- Document docs/ and materials/ layout in DEVELOPMENT tree
-- Materials/ for promo, screenshots, logo, store listing
-- Move privacy policy HTML back to docs/
-- Move privacy policy HTML from docs/ to pages/
-- Add Chrome Web Store badge and recommended install path to READMEs
-- Refresh hero/features tiles and add 1400x560 marquee
-- Add promo screenshots and marketing assets
+
+- Clarify that smart import sends the selected document to the configured AI service even when automatic matching is disabled
+- Clarify data handling for cloud AI services and Ollama, including the distinction between local and cloud models
+
+## [2.2.1] - 2026-09-05
+
+No separate release notes are available for this version.
+
 ## [2.2.0] - 2026-09-05
 
 ### Added
-- Local Ollama provider with configurable loopback address and installed model name, without an API key
-- Background transport for local inference, connection testing, field matching, answer generation, and TXT/Markdown smart import
-- Automatic Ollama model discovery, dropdown selection with a saved default, refresh control, and offline/empty-list feedback
-- Settings-page Ollama setup guidance with per-extension commands, platform selection, copy support, and automatic guidance on HTTP 403
-- Ollama regression tests and bilingual setup instructions
+
+- Ollama support for AI field matching and answer generation without an API key
+- TXT and Markdown smart import through Ollama; PDF import is not supported by this provider
+- Ollama model discovery and selection, with a saved default and connection testing
+- Ollama setup instructions and guidance for connection permission errors
 
 ### Changed
-- Require Chrome 110+ to keep slow local inference alive in the background worker
+
+- Require Chrome 110 or later for Ollama support
 
 ## [2.1.1] - 2026-09-04
 
 ### Changed
+
 - Update AI defaults to Claude Sonnet 4.6 and GPT-5.6 Luna
 - Add GPT-5.6 Terra as a higher-quality option and retain GPT-4o Mini for legacy compatibility
 - Migrate retired or invalid saved model selections to supported replacements
 - Generate AI answers for unmatched plain text inputs as well as textareas
-
 
 ## [2.1.0] - 2026-04-18
 
