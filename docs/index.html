@@ -17,7 +17,7 @@
   <meta property="og:site_name"   content="Apply Pilot" />
   <meta property="og:url"         content="https://janewu77.github.io/apply-pilot/" />
   <meta property="og:title"       content="Apply Pilot — Smart Job Application Form Auto-Filler" />
-  <meta property="og:description" content="Fill job application forms instantly. Save your profile once, fill any form with one click. AI matching, auto-learning, 100% local." />
+  <meta property="og:description" content="Fill job application forms instantly. Save your profile locally, fill forms with one click. Optional AI via Claude, GPT, or Ollama." />
   <meta property="og:image"       content="https://janewu77.github.io/apply-pilot/images/og-cover.png" />
   <!-- Twitter Card -->
   <meta name="twitter:card"        content="summary_large_image" />
@@ -30,7 +30,7 @@
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "Apply Pilot",
-    "description": "Chrome extension that fills job application forms instantly. Save your profile once, fill any form with one click. AI matching, auto-learning, 100% local.",
+    "description": "Chrome extension that fills job application forms instantly. Save your profile locally, fill forms with one click. Optional AI via Claude, GPT, or Ollama.",
     "url": "https://janewu77.github.io/apply-pilot/",
     "image": "https://janewu77.github.io/apply-pilot/images/og-cover.png",
     "author": { "@type": "Person", "name": "Jane Wu" },
@@ -570,8 +570,8 @@
       </div>
       <div class="hero-trust">
         <div class="hero-trust-item"><span class="ck">✓</span> No account needed</div>
-        <div class="hero-trust-item"><span class="ck">✓</span> No data collected</div>
-        <div class="hero-trust-item"><span class="ck">✓</span> 100% local storage</div>
+        <div class="hero-trust-item"><span class="ck">✓</span> No analytics tracking</div>
+        <div class="hero-trust-item"><span class="ck">✓</span> Profile saved locally</div>
       </div>
     </div>
 
@@ -726,7 +726,7 @@
       <div class="fcard">
         <div class="fi">🤖</div>
         <h3>AI semantic matching <span class="badge-opt">optional</span></h3>
-        <p>Connect your own Claude or GPT API key to handle edge-case fields and draft answers to open-ended questions like <em>"Why do you want this role?"</em> Your key stays on your device — nothing is collected.</p>
+        <p>Use Claude, GPT, or Ollama to match fields and draft answers to questions like <em>"Why do you want this role?"</em> AI requests send relevant data to your chosen service. Cloud API keys are saved locally and sent to the chosen provider to authenticate requests. Downloaded Ollama models run on your device; Ollama cloud models run remotely.</p>
       </div>
 
       <!-- Auto-learning -->
@@ -759,14 +759,16 @@
   <div class="section-wrap">
     <div class="privacy-box">
       <div class="privacy-icon">🔒</div>
-      <h2>Your data never leaves your device</h2>
+      <h2>Saved locally. AI is your choice.</h2>
       <p class="lead">
-        Apply Pilot stores everything in Chrome's local storage.
-        No accounts, no servers, no tracking. Your profile is yours.
+        Your profile, settings, and learned answers are saved in Chrome's local storage.
+        When you enable AI matching or explicitly use an AI action, relevant data goes to your selected service.
+        Smart import sends the selected document even when automatic AI matching is off; connection testing sends a short test prompt.
+        No AI requests pass through an Apply Pilot server. No advertising or analytics tracking.
       </p>
       <div class="privacy-points">
-        <div class="pp"><span class="ck">✓</span> All data stored locally</div>
-        <div class="pp"><span class="ck">✓</span> API key stays on your device</div>
+        <div class="pp"><span class="ck">✓</span> Profile saved locally</div>
+        <div class="pp"><span class="ck">✓</span> Choose your AI service</div>
         <div class="pp"><span class="ck">✓</span> Export &amp; reset anytime</div>
         <div class="pp"><span class="ck">✓</span> No account required</div>
         <div class="pp"><span class="ck">✓</span> Nothing submitted automatically</div>

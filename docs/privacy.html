@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Privacy Policy — Apply Pilot</title>
-  <meta name="description" content="Apply Pilot privacy policy: all data is stored locally in your browser. No servers, no accounts, no tracking, no data collection." />
+  <meta name="description" content="Apply Pilot saves your profile and settings locally. Optional AI actions send relevant data to your chosen service. No advertising or analytics tracking." />
   <link rel="canonical" href="https://janewu77.github.io/apply-pilot/privacy.html" />
   <meta name="theme-color" content="#8b5cf6" />
   <link rel="icon" type="image/svg+xml" href="images/icon.svg" />
@@ -61,7 +61,7 @@
 
 <h2>1. Data We Collect and Store</h2>
 
-<p>Apply Pilot stores the following data <strong>locally on your device</strong> using Chrome's built-in <code>chrome.storage.local</code> API. This data never leaves your device unless you explicitly enable the optional AI feature described in Section 3.</p>
+<p>Apply Pilot saves the following data <strong>locally on your device</strong> using Chrome's built-in <code>chrome.storage.local</code> API. The extension uses your profile to fill forms on the page you choose. Enabling automatic AI matching or explicitly invoking an AI action, including smart import or connection testing, sends the data needed for that action to your selected service as described in Section 3.</p>
 
 <table>
   <thead>
@@ -79,7 +79,7 @@
   </tbody>
 </table>
 
-<p><strong>We do not operate any servers. None of this data is transmitted to Apply Pilot or its developer.</strong></p>
+<p><strong>AI requests are not routed through an Apply Pilot server, and profile data is not sent to the developer.</strong></p>
 
 <hr>
 
@@ -97,22 +97,24 @@
 
 <h2>3. Optional AI Features and Third-Party Data Transmission</h2>
 
-<p>Apply Pilot includes an <strong>optional AI matching feature</strong> powered by cloud large language model (LLM) APIs or a local Ollama server. This feature is <strong>disabled by default</strong> and only activates when you:</p>
+<p>Apply Pilot includes optional AI features powered by cloud large language model (LLM) APIs or an Ollama server. <strong>Automatic AI matching is disabled by default</strong> and activates when you:</p>
 <ol>
   <li>Explicitly enable it in the extension's Settings page, and</li>
   <li>Provide your own API key from Anthropic or OpenAI, or configure a local Ollama model.</li>
 </ol>
 
-<p><strong>When AI is enabled</strong>, the following data is sent to the service you selected (Anthropic, OpenAI, or Ollama):</p>
+<p><strong>For AI matching and answer generation</strong>, the request includes the data needed for the task and is sent to the service you selected (Anthropic, OpenAI, or Ollama):</p>
 <ul>
   <li>Selected fields from your profile (e.g., job title, years of experience, skills, education, pre-written answers)</li>
   <li>Information about unmatched form fields on the current page (field labels, placeholders, input types)</li>
 </ul>
 
 <p>This data is transmitted directly from your browser to the API provider. It is <strong>not</strong> routed through any Apply Pilot server.</p>
+<p>Cloud API keys are saved locally and included in requests to the selected provider for authentication. They are not sent to Apply Pilot. Ollama does not require an API key in the extension.</p>
 
 <p>Ollama requests go through the extension background worker to your configured loopback address. Downloaded local models run on your device; cloud models served through Ollama still run remotely. The extension does not download models automatically.</p>
 <p>Smart import is an explicit action that sends the selected document content to the configured service, even when automatic AI matching is disabled. Connection testing sends a short test prompt. Ollama smart import supports text and Markdown, not PDF.</p>
+<p>Ollama model discovery requests the installed-model list from your configured local server without sending profile or document content.</p>
 
 <p>Please review the privacy policies of your chosen provider:</p>
 <ul>
@@ -126,13 +128,13 @@
 
 <h2>4. Data Storage and Retention</h2>
 
-<p>All data is stored locally in your browser using <code>chrome.storage.local</code>. It remains on your device until you:</p>
+<p>Your saved profile, settings, and learned answers are stored in your browser using <code>chrome.storage.local</code>. These local copies remain until you:</p>
 <ul>
   <li>Manually clear it in the Settings page</li>
   <li>Uninstall the extension (which removes all stored data)</li>
 </ul>
 
-<p>Apply Pilot does not have access to your stored data, cannot retrieve it, and cannot delete it on your behalf.</p>
+<p>The developer cannot retrieve or delete your local data on your behalf. Clearing local data does not delete data already sent to a selected AI service; that service's policies govern its handling and retention.</p>
 
 <hr>
 
@@ -144,7 +146,7 @@
   </thead>
   <tbody>
     <tr><td><code>storage</code></td><td>Save your profile and settings locally on your device</td></tr>
-    <tr><td><code>activeTab</code></td><td>Read the current tab's URL to identify the active page</td></tr>
+    <tr><td><code>activeTab</code></td><td>Temporarily access the current page so the extension can scan and fill its form when you trigger it</td></tr>
     <tr><td><code>scripting</code></td><td>Inject the form-filling script into the current page when you trigger it</td></tr>
     <tr><td>Loopback host permissions (localhost, 127.0.0.1, [::1]; HTTP/HTTPS)</td><td>Allow the background worker to call your local Ollama server. These permissions do not grant access to arbitrary websites.</td></tr>
   </tbody>
@@ -156,10 +158,10 @@
 
 <p>Apply Pilot does <strong>not</strong>:</p>
 <ul>
-  <li>Sell, rent, or share your personal data with any third party</li>
+  <li>Sell or rent your personal data</li>
   <li>Transmit your data to any Apply Pilot server</li>
   <li>Use your data for advertising or analytics</li>
-  <li>Share data with third parties except as described in Section 3 (API calls you initiate)</li>
+  <li>Send data to AI services except as described in Section 3 (matching you enable and AI actions you explicitly invoke)</li>
 </ul>
 
 <hr>

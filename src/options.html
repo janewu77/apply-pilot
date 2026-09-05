@@ -172,16 +172,14 @@
       color: #64748b;
     }
     .ollama-setup {
-      margin: 16px 0;
-      padding: 14px;
-      border: 1px solid #475569;
-      border-radius: 8px;
-      background: #0f172a;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #334155;
       font-size: 12px;
-      line-height: 1.6;
-      color: #cbd5e1;
+      line-height: 1.7;
+      color: #94a3b8;
     }
-    .ollama-setup h3 { margin: 0 0 6px; font-size: 14px; color: #f8fafc; }
+    .ollama-setup h3 { margin: 0 0 6px; font-size: 13px; font-weight: 500; color: #cbd5e1; }
     .ollama-setup p { margin: 8px 0; }
     .ollama-setup summary { cursor: pointer; color: #93c5fd; }
     .ollama-setup ol { padding-left: 20px; margin: 12px 0; }
@@ -502,7 +500,7 @@
       <div class="card" id="smartImportCard">
         <div class="card-title" data-i18n="options.smartImport.title">📄 Smart Import — Upload resume, auto-fill profile</div>
         <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;" data-i18n="options.smartImport.desc">
-          Upload your resume or personal profile document. AI will automatically extract all information to fill in the profile. Requires API Key configured in AI Settings.
+          Smart import sends your document to the AI service configured in AI Settings, even when automatic matching is off. Use a cloud API key or Ollama (TXT/Markdown only). Review extracted details before applying.
         </p>
 
         <div class="smart-import-zone" id="smartImportZone">
@@ -852,35 +850,6 @@
           </div>
 
           <div class="provider-config" id="config-ollama" style="display: none;">
-            <section class="ollama-setup" aria-labelledby="ollamaSetupTitle">
-              <h3 id="ollamaSetupTitle" data-i18n="options.llm.setupTitle">First-time setup: allow this extension in Ollama</h3>
-              <p data-i18n="options.llm.setupIntro">Ollama must allow this extension to send requests. A model list can load even when inference is blocked with 403. If Test Connection already succeeds, no further setup is needed.</p>
-              <details id="ollamaSetupDetails">
-                <summary data-i18n="options.llm.setupExpand">Show setup instructions and copy command</summary>
-                <ol>
-                  <li data-i18n="options.llm.setupStep1">Choose how you run Ollama, then copy and run the command below. It adds this extension to OLLAMA_ORIGINS.</li>
-                  <li data-i18n="options.llm.setupStep2">For desktop apps, fully quit Ollama from its menu and reopen it. Closing the window alone may leave the server running. For terminal startup, keep ollama serve running.</li>
-                  <li data-i18n="options.llm.setupStep3">Return here, refresh models, then click Test Connection.</li>
-                </ol>
-                <div class="field">
-                  <label for="ollamaSetupPlatform" data-i18n="options.llm.setupPlatform">Ollama environment</label>
-                  <select id="ollamaSetupPlatform">
-                    <option value="mac" data-i18n="options.llm.setupMac">macOS desktop app · Terminal</option>
-                    <option value="win" data-i18n="options.llm.setupWin">Windows desktop app · PowerShell</option>
-                    <option value="linux" data-i18n="options.llm.setupLinux">Linux · terminal (bash)</option>
-                  </select>
-                </div>
-                <p id="ollamaSetupNote"></p>
-                <div class="field">
-                  <label for="ollamaSetupCommand" data-i18n="options.llm.setupCommand">Command for this extension</label>
-                  <textarea id="ollamaSetupCommand" rows="4" readonly spellcheck="false"></textarea>
-                </div>
-                <button type="button" class="btn btn-secondary" id="copyOllamaSetup" data-i18n="options.llm.setupCopy">Copy command</button>
-                <span id="ollamaSetupCopyStatus" role="status" aria-live="polite"></span>
-                <p data-i18n="options.llm.setupScope">This only displays a command; the extension cannot change your system settings. Keep any origins configured elsewhere when adding this extension.</p>
-                <a href="https://docs.ollama.com/faq#how-can-i-allow-additional-web-origins-to-access-ollama" target="_blank" rel="noopener noreferrer" data-i18n="options.llm.setupDocs">Official Ollama setup guide</a>
-              </details>
-            </section>
             <div class="field-group">
               <div class="field">
                 <label for="ollamaBaseUrl" data-i18n="options.llm.ollamaUrl">Local server address</label>
@@ -894,16 +863,46 @@
                 </select>
                 <button type="button" class="btn btn-secondary" id="refreshOllamaModels" data-i18n="options.llm.ollamaRefresh">↻ Refresh models</button>
                 <span class="hint" id="ollamaModelsStatus" role="status" aria-live="polite"></span>
-                <span class="hint" data-i18n="options.llm.ollamaModelHint">Choose a model available on this server. Use a downloaded local model; cloud models run remotely.</span>
+                <span class="hint" data-i18n="options.llm.ollamaModelHint">Select a model from your Ollama server. To keep processing on your device, choose a local model.</span>
               </div>
             </div>
-            <p class="hint" data-i18n="options.llm.ollamaHint">Start Ollama, select a model, then test the connection. First use may take longer while the model loads. Text/Markdown import is supported; PDF import is not supported.</p>
+            <p class="hint" data-i18n="options.llm.ollamaHint">Start Ollama, select a model, then test the connection. First use may take longer while the model loads. Ollama import currently supports TXT and Markdown. PDF support is not yet implemented.</p>
           </div>
 
           <div class="btn-row">
             <button class="btn btn-primary" id="testConnection" data-i18n="options.llm.testBtn">🔌 Test Connection</button>
           </div>
           <div class="test-status" id="testStatus"></div>
+
+          <section class="ollama-setup" id="ollamaSetup" hidden aria-labelledby="ollamaSetupTitle">
+            <h3 id="ollamaSetupTitle" data-i18n="options.llm.setupTitle">First-time setup: allow this extension in Ollama</h3>
+            <p data-i18n="options.llm.setupIntro">Ollama must allow this extension to send requests. A model list can load even when inference is blocked with 403. If Test Connection already succeeds, no further setup is needed.</p>
+            <details id="ollamaSetupDetails">
+              <summary data-i18n="options.llm.setupExpand">Show setup instructions and copy command</summary>
+              <ol>
+                <li data-i18n="options.llm.setupStep1">Choose how you run Ollama, then copy and run the command below. It adds this extension to OLLAMA_ORIGINS.</li>
+                <li data-i18n="options.llm.setupStep2">For desktop apps, fully quit Ollama from its menu and reopen it. Closing the window alone may leave the server running. For terminal startup, keep ollama serve running.</li>
+                <li data-i18n="options.llm.setupStep3">Return here, refresh models, then click Test Connection.</li>
+              </ol>
+              <div class="field">
+                <label for="ollamaSetupPlatform" data-i18n="options.llm.setupPlatform">Ollama environment</label>
+                <select id="ollamaSetupPlatform">
+                  <option value="mac" data-i18n="options.llm.setupMac">macOS desktop app · Terminal</option>
+                  <option value="win" data-i18n="options.llm.setupWin">Windows desktop app · PowerShell</option>
+                  <option value="linux" data-i18n="options.llm.setupLinux">Linux · terminal (bash)</option>
+                </select>
+              </div>
+              <p id="ollamaSetupNote"></p>
+              <div class="field">
+                <label for="ollamaSetupCommand" data-i18n="options.llm.setupCommand">Command for this extension</label>
+                <textarea id="ollamaSetupCommand" rows="4" readonly spellcheck="false"></textarea>
+              </div>
+              <button type="button" class="btn btn-secondary" id="copyOllamaSetup" data-i18n="options.llm.setupCopy">Copy command</button>
+              <span id="ollamaSetupCopyStatus" role="status" aria-live="polite"></span>
+              <p data-i18n="options.llm.setupScope">This only displays a command; the extension cannot change your system settings. Keep any origins configured elsewhere when adding this extension.</p>
+              <a href="https://docs.ollama.com/faq#how-can-i-allow-additional-web-origins-to-access-ollama" target="_blank" rel="noopener noreferrer" data-i18n="options.llm.setupDocs">Official Ollama setup guide</a>
+            </details>
+          </section>
         </div>
       </div>
     </div>

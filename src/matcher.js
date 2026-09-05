@@ -161,7 +161,7 @@ const FIELD_KEYWORDS = {
 /**
  * 从表单元素提取文本线索
  */
-function extractFieldClues(element) {
+function extractFieldClues(element, { includeContext = true } = {}) {
   const clues = [];
 
   // 1. aria-label
@@ -180,6 +180,8 @@ function extractFieldClues(element) {
   const cleanAttr = (str) =>
     str
       .replace(/\.(value|input|field|control)$/i, '') // 去掉无语义后缀
+      .replace(/([a-z\d])([A-Z])/g, '$1 $2')       // phoneNumber → phone Number
+      .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')    // PhoneNumber / URLField
       .replace(/[._\-\[\]]/g, ' ');                  // 分隔符统一转空格
   if (element.name) {
     clues.push(cleanAttr(element.name));
@@ -209,13 +211,13 @@ function extractFieldClues(element) {
 
   // 5. 上一个兄弟节点（很多表单把标签放在输入框前面）
   const prev = element.previousElementSibling;
-  if (prev && (prev.tagName === 'LABEL' || prev.tagName === 'SPAN' || prev.tagName === 'DIV')) {
+  if (includeContext && prev && (prev.tagName === 'LABEL' || prev.tagName === 'SPAN' || prev.tagName === 'DIV')) {
     clues.push(cleanLabel(prev.textContent.trim()));
   }
 
   // 6. 父容器中的文本（限制范围，避免拿到太多无关文字）
   const parent = element.parentElement;
-  if (parent) {
+  if (includeContext && parent) {
     const parentText = Array.from(parent.childNodes)
       .filter(n => n.nodeType === Node.TEXT_NODE || (n.nodeType === Node.ELEMENT_NODE && ['LABEL', 'SPAN', 'P', 'DIV'].includes(n.tagName) && n !== element))
       .map(n => cleanLabel(n.textContent.trim()))
@@ -238,89 +240,89 @@ function extractFieldClues(element) {
  * 返回: { profileKey: string, confidence: 'high' | 'medium' | 'low' } | null
  */
 function matchFieldByKeywords(element) {
-  const clues = extractFieldClues(element);
-  if (clues.length === 0) return null;
+  // 标准字段语义直接决定匹配，不能被附近城市等关键词的累计分数覆盖。
+  const autocompleteMap = {
+    // 姓名
+    'given-name':       'personal.firstName',
+    'family-name':      'personal.lastName',
+    'name':             'personal.fullName',
 
-  const clueText = clues.join(' ').toLowerCase();
-  let bestMatch = null;
-  let bestScore = 0;
+    // 联系方式
+    'email':            'personal.email',
+    'tel':              'personal.phone',
+    'tel-national':     'personal.phone',      // 不含国家码的本地号码
+
+    // 地址
+    'street-address':   'address.street',
+    'address-line1':    'address.street',      // 地址第一行，语义等同 street
+    'address-line2':    'address.street',      // 地址第二行，暂映射到同一字段
+    'address-level2':   'address.city',        // 城市（level2 = 市级行政区）
+    'address-level1':   'address.state',       // 省/州（level1 = 一级行政区）
+    'postal-code':      'address.postalCode',
+    'country-name':     'address.country',     // 国家全名
+    'country':          'address.country',     // 国家 ISO 代码（如 DE、CN）
+
+    // 工作信息
+    'organization':       'work.currentCompany', // 公司/组织名
+    'organization-title': 'work.currentTitle',   // 职位名称
+
+    // 个人信息
+    'bday':             'personal.dateOfBirth',  // 完整生日
+    'bday-day':         'personal.dateOfBirth',  // 生日-日
+    'bday-month':       'personal.dateOfBirth',  // 生日-月
+    'bday-year':        'personal.dateOfBirth',  // 生日-年
+    'sex':              'personal.gender',        // 性别
+
+    // 链接
+    'url':              'links.website',
+  };
+  // 兼容 section-*/shipping/home 等前缀；webauthn 可以位于字段 token 后。
+  const autocompleteTokens = (element.autocomplete || '').toLowerCase().trim().split(/\s+/);
+  if (autocompleteTokens.at(-1) === 'webauthn') autocompleteTokens.pop();
+  const autocompleteKey = autocompleteMap[autocompleteTokens.at(-1)];
+  if (Object.prototype.hasOwnProperty.call(autocompleteMap, autocompleteTokens.at(-1))) {
+    return { profileKey: autocompleteKey, confidence: 'high', score: 20 };
+  }
 
   for (const [profileKey, config] of Object.entries(FIELD_KEYWORDS)) {
-    let score = 0;
-
-    // 检查 input type 匹配
-    if (config.inputTypes && config.inputTypes.includes(element.type)) {
-      score += 5;
-    }
-
-    // 检查关键词匹配
-    for (const keyword of config.keywords) {
-      if (clueText.includes(keyword.toLowerCase())) {
-        // 越长的关键词匹配越精确
-        score += keyword.length + config.priority;
-      }
-    }
-
-    // 检查 autocomplete 属性直接匹配
-    //
-    // autocomplete 的合法值由 WHATWG HTML Living Standard 定义：
-    // https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill
-    //
-    // 当浏览器或站点正确设置了 autocomplete 属性时，这是最可靠的匹配信号，
-    // 优先级高于关键词匹配，因此命中后加 20 分（远高于关键词得分）。
-    const autocompleteMap = {
-      // 姓名
-      'given-name':       'personal.firstName',
-      'family-name':      'personal.lastName',
-      'name':             'personal.fullName',
-
-      // 联系方式
-      'email':            'personal.email',
-      'tel':              'personal.phone',
-      'tel-national':     'personal.phone',      // 不含国家码的本地号码
-
-      // 地址
-      'street-address':   'address.street',
-      'address-line1':    'address.street',      // 地址第一行，语义等同 street
-      'address-line2':    'address.street',      // 地址第二行，暂映射到同一字段
-      'address-level2':   'address.city',        // 城市（level2 = 市级行政区）
-      'address-level1':   'address.state',       // 省/州（level1 = 一级行政区）
-      'postal-code':      'address.postalCode',
-      'country-name':     'address.country',     // 国家全名
-      'country':          'address.country',     // 国家 ISO 代码（如 DE、CN）
-
-      // 工作信息
-      'organization':       'work.currentCompany', // 公司/组织名
-      'organization-title': 'work.currentTitle',   // 职位名称
-
-      // 个人信息
-      'bday':             'personal.dateOfBirth',  // 完整生日
-      'bday-day':         'personal.dateOfBirth',  // 生日-日
-      'bday-month':       'personal.dateOfBirth',  // 生日-月
-      'bday-year':        'personal.dateOfBirth',  // 生日-年
-      'sex':              'personal.gender',        // 性别
-
-      // 链接
-      'url':              'links.website',
-    };
-    if (element.autocomplete && autocompleteMap[element.autocomplete] === profileKey) {
-      score += 20; // autocomplete 是浏览器标准信号，直接强匹配
-    }
-
-    if (score > bestScore) {
-      bestScore = score;
-      bestMatch = profileKey;
+    if (config.inputTypes?.includes(element.type)) {
+      return { profileKey, confidence: 'high', score: 20 };
     }
   }
 
-  if (!bestMatch) return null;
+  // 先使用字段自身线索；只有完全无法识别时才读取附近文字。
+  // 不把不同线索拼成一句话，避免跨属性构造出不存在的关键词短语。
+  for (const includeContext of [false, true]) {
+    const clues = extractFieldClues(element, { includeContext });
+    let bestMatch = null;
+    let bestScore = 0;
+    for (const [profileKey, config] of Object.entries(FIELD_KEYWORDS)) {
+      let score = 0;
+      for (const keyword of config.keywords) {
+        // 短英文/德文词需要完整词边界，避免 ort 命中 support/portfolio、
+        // tel 命中 hotel。较长的词仍支持 Telefon → Telefonnummer 等复合词。
+        const pattern = /^[a-z]{1,4}$/.test(keyword)
+          ? new RegExp(`(^|[^\\p{L}\\p{N}])${keyword}(?=$|[^\\p{L}\\p{N}])`, 'u')
+          : null;
+        if (clues.some(clue => pattern ? pattern.test(clue) : clue.includes(keyword))) {
+          score += keyword.length + config.priority;
+        }
+      }
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = profileKey;
+      }
+    }
 
-  // 根据分数判断置信度
-  let confidence = 'low';
-  if (bestScore >= 15) confidence = 'high';
-  else if (bestScore >= 8) confidence = 'medium';
+    if (bestMatch) {
+      let confidence = 'low';
+      if (bestScore >= 15) confidence = 'high';
+      else if (bestScore >= 8) confidence = 'medium';
+      return { profileKey: bestMatch, confidence, score: bestScore };
+    }
+  }
 
-  return { profileKey: bestMatch, confidence, score: bestScore };
+  return null;
 }
 
 

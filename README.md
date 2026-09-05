@@ -17,10 +17,10 @@ Save your profile once — name, contact info, work history, education, and Q&A 
 - 🤖 **AI semantic matching** (optional): connects to Claude, GPT, or local Ollama models to handle fields that don't match keywords
 - 🟡 **Colour-coded labels**: Blue = matched · Green = filled · Yellow = unmatched, fill manually
 - 📚 **Auto-learning**: manually fill a yellow field once, and it's remembered for next time
-- 🔒 **Privacy-first**: profiles stay in Chrome Storage; AI requests go only to your selected service
+- 🔒 **Privacy-first**: profiles are saved in Chrome Storage; AI requests go to your selected service
 - ✅ **You stay in control**: nothing is submitted automatically
 
-Supports forms in English · Deutsch · 中文. Works on most job sites. No account required. No data collected.
+Supports forms in English · Deutsch · 中文. Works on most job sites. No Apply Pilot account required. No advertising or analytics tracking. Optional AI actions send the required data to your selected service.
 
 ![How Apply Pilot works](materials/promo/2-how-it-works.png)
 

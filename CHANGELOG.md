@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.2] - 2026-09-05
+
+### Changed
+- Release 2.2.0 with local Ollama provider support.
+- Release 2.1.1 with updated AI model defaults and broader open-ended filling.
+- For google search
+- Improve landing page SEO with icons, sitemap, and structured data
+- Add GitHub Pages website badge (EN/ZH)
+- Add OG cover image and meta tags for social preview
+- Add product landing page (index.html)
+- Document docs/ and materials/ layout in DEVELOPMENT tree
+- Materials/ for promo, screenshots, logo, store listing
+- Move privacy policy HTML back to docs/
+- Move privacy policy HTML from docs/ to pages/
+- Add Chrome Web Store badge and recommended install path to READMEs
+- Refresh hero/features tiles and add 1400x560 marquee
+- Add promo screenshots and marketing assets
+## [2.2.1] - 2026-09-05
+
+### Changed
+- Release 2.2.0 with local Ollama provider support.
+- Release 2.1.1 with updated AI model defaults and broader open-ended filling.
+- For google search
+- Improve landing page SEO with icons, sitemap, and structured data
+- Add GitHub Pages website badge (EN/ZH)
+- Add OG cover image and meta tags for social preview
+- Add product landing page (index.html)
+- Document docs/ and materials/ layout in DEVELOPMENT tree
+- Materials/ for promo, screenshots, logo, store listing
+- Move privacy policy HTML back to docs/
+- Move privacy policy HTML from docs/ to pages/
+- Add Chrome Web Store badge and recommended install path to READMEs
+- Refresh hero/features tiles and add 1400x560 marquee
+- Add promo screenshots and marketing assets
 ## [2.2.0] - 2026-09-05
 
 ### Added

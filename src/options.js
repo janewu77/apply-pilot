@@ -152,6 +152,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const provider = option.dataset.provider;
       document.querySelectorAll('.provider-config').forEach(c => c.style.display = 'none');
       document.getElementById(`config-${provider}`).style.display = 'block';
+      document.getElementById('ollamaSetup').hidden = provider !== 'ollama';
 
       saveLLMData();
       if (provider === 'ollama') refreshOllamaModels();
@@ -401,6 +402,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     document.querySelectorAll('.provider-config').forEach(c => c.style.display = 'none');
     document.getElementById(`config-${provider}`).style.display = 'block';
+    document.getElementById('ollamaSetup').hidden = provider !== 'ollama';
 
     document.getElementById('anthropicKey').value = settings.apiKey || '';
     document.getElementById('anthropicModel').value = settings.model || DEFAULT_ANTHROPIC_MODEL;

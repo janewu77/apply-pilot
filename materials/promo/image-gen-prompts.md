@@ -27,10 +27,10 @@ A sleek Chrome browser window displaying a job application form, with a floating
 
 ## Prompt 3 — Privacy & Trust
 
-**Theme**: Data security and local storage — no cloud, no tracking.
+**Theme**: Local profile storage with optional AI requests to a user-selected service; no advertising or analytics tracking.
 
 ```
-A minimalist illustration of a browser window with a shield icon glowing in purple, surrounded by floating data elements (profile cards, form fields, checkmarks) all connected to the local device with no outgoing arrows. Clean flat design, dark navy background, purple and teal accent colors, concept of privacy and local data storage, soft geometric shapes, professional tech product style. --ar 16:9 --v 6
+A minimalist illustration of a browser window with a shield icon glowing in purple, surrounded by floating data elements (profile cards, form fields, checkmarks) connected to local device storage, plus a subtle optional connection controlled by a toggle to a separate AI service icon. Do not imply that AI requests always remain on the device. Clean flat design, dark navy background, purple and teal accent colors, concept of privacy and local data storage, soft geometric shapes, professional tech product style. --ar 16:9 --v 6
 ```
 
 ---

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "minimum_chrome_version": "110",
   "name": "Apply Pilot",
-  "version": "2.2.0",
+  "version": "2.2.2",
   "description": "Smart job application form auto-filler with AI semantic matching and auto-learning. Supports English, German, and Chinese forms.",
   "permissions": [
     "storage",
