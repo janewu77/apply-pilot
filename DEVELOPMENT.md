@@ -4,7 +4,7 @@ For developers who want to run, debug, or modify Apply Pilot locally. — [中�
 
 ## Requirements
 
-- Google Chrome (Manifest V3 support, Chrome 88+)
+- Google Chrome (Manifest V3 support, Chrome 110+)
 - No Node.js or build tools required — this is a plain native JS extension that loads directly
 
 ## Loading the Extension Locally
@@ -26,7 +26,7 @@ apply-pilot/
 │   ├── background.js        # Service Worker: handles shortcuts and install events
 │   ├── content.js           # Content Script main controller: scan, match, fill, UI injection
 │   ├── matcher.js           # Keyword matching engine (EN / DE / ZH keyword tables)
-│   ├── llm.js               # LLM semantic matching module (Anthropic / OpenAI API calls)
+│   ├── llm.js               # LLM semantic matching module (Anthropic / OpenAI / Ollama)
 │   ├── profile.js           # User profile data structure and Chrome Storage read/write
 │   ├── popup.html           # Small popup window shown when clicking the extension icon
 │   ├── popup.js             # Popup logic
@@ -68,7 +68,7 @@ Maintains a keyword → profile field mapping table (`FIELD_KEYWORDS`) supportin
 - `extractFieldClues(element)` — extracts label, name, placeholder, and other clues from a field for use by the LLM and the auto-learning system
 
 ### `llm.js`
-When keyword matching fails, calls the LLM API for semantic inference. Supports Anthropic (Claude) and OpenAI (GPT). The API key is entered by the user in Settings and stored only in local Chrome Storage; it is not included in exported profiles.
+When keyword matching fails, calls the LLM API for semantic inference. Supports Anthropic (Claude), OpenAI (GPT), and Ollama local models. The API key is entered by the user in Settings and stored only in local Chrome Storage; it is not included in exported profiles.
 
 ### `content.js`
 The Content Script main controller, injected into all pages. Responsibilities:
@@ -106,7 +106,7 @@ chrome.storage.local.get('applyPilotProfile')
 
 // LLM settings
 chrome.storage.local.get('applyPilotLLM')
-// { provider, apiKey, apiKeyOpenAI, model, modelOpenAI, enabled }
+// { provider, apiKey, apiKeyOpenAI, model, modelOpenAI, ollamaBaseUrl, modelOllama, enabled }
 ```
 
 ## React / Vue Compatibility
@@ -122,3 +122,15 @@ Many job sites use controlled inputs — the field looks filled in the UI, but t
 - **Content Script logs**: open DevTools on the target page → Console, filter by `[Apply Pilot]`
 - **Background logs**: `chrome://extensions/` → extension card → "Service Worker" link → Console
 - **Inspect Storage**: DevTools → Application → Storage → Local Storage (note: the extension's storage lives in the extension's own DevTools, not the page's) — or run `chrome.storage.local.get(null, console.log)` in the background console
+
+## Ollama transport and verification
+
+`ollama.js` is shared by the settings page, injected scripts, and background worker. Local inference uses the [Ollama chat API](https://docs.ollama.com/api/chat) with `stream: false`, JSON mode for structured tasks, and a 120-second timeout. The worker accepts only fixed `/api/chat` inference and settings-only `/api/tags` discovery requests to loopback addresses and rejects redirects. Page requests use saved settings and require Ollama to be enabled; only the options page may test unsaved settings or explicitly import a document while automatic matching is disabled.
+
+Loopback host permissions let the worker make [cross-origin requests](https://developer.chrome.com/docs/extensions/develop/concepts/network-requests). Both popup and shortcut injection load `ollama.js` before `llm.js`. Cloud request paths remain unchanged.
+
+Run `npm test` (Node.js 18+) for mocked transport, provider, settings, and import regressions; `npm run build` refreshes `dist/`. For real inference, run `node scripts/test-ollama-live.js MODEL_NAME` (Node.js 18+, Ollama already running). It sends synthetic data only. Browser acceptance still requires reloading the extension and target page, testing the connection, and scanning a form using both popup and keyboard shortcut.
+
+During inference, a 20-second extension API heartbeat follows the [Chrome service worker guidance](https://developer.chrome.com/docs/extensions/develop/migrate/to-service-workers#keep_a_service_worker_alive) to prevent idle termination. It stops on completion, error, or timeout. This requires Chrome 110+.
+
+Model discovery uses [GET /api/tags](https://docs.ollama.com/api/tags) with a 10-second timeout. Run `node scripts/test-ollama-live.js --list-only` to verify discovery without inference. The dropdown defaults to the first sorted model only when no model has been saved; a missing saved model stays visible with an unavailable label. A request counter prevents stale server responses from replacing a newer list.

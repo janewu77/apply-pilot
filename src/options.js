@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const DEFAULT_ANTHROPIC_MODEL = 'claude-sonnet-4-6';
   const DEFAULT_OPENAI_MODEL = 'gpt-5.6-luna';
+  let ollamaModelsRequest = 0;
+  let ollamaModelsTimer = null;
 
   function normalizeLLMModels(settings) {
     const normalized = { ...settings };
@@ -21,6 +23,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       normalized.modelOpenAI = 'gpt-5.6-terra';
     }
 
+    normalized.ollamaBaseUrl = normalized.ollamaBaseUrl || DEFAULT_OLLAMA_BASE_URL;
+    normalized.modelOllama = normalized.modelOllama || '';
     return normalized;
   }
 
@@ -44,6 +48,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   await I18n.init();
   applyLangUI(I18n.currentLang);
   I18n.apply();
+  chrome.runtime.getPlatformInfo(info => {
+    document.getElementById('ollamaSetupPlatform').value = info.os === 'win' ? 'win' : info.os === 'mac' ? 'mac' : 'linux';
+    updateOllamaSetup();
+  });
+  document.getElementById('ollamaSetupPlatform').addEventListener('change', updateOllamaSetup);
+  document.getElementById('copyOllamaSetup').addEventListener('click', copyOllamaSetup);
 
   document.getElementById('langEn').addEventListener('click', () => switchLang('en'));
   document.getElementById('langZh').addEventListener('click', () => switchLang('zh'));
@@ -52,6 +62,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     await I18n.setLang(lang);
     applyLangUI(lang);
     I18n.apply();
+    updateOllamaSetup();
+  }
+
+  function ollamaSetupCommand(platform) {
+    const origin = `chrome-extension://${chrome.runtime.id}`;
+    if (platform === 'mac') {
+      return 'applyPilotOrigins="$(launchctl getenv OLLAMA_ORIGINS)"\n' +
+        `launchctl setenv OLLAMA_ORIGINS "\${applyPilotOrigins:+$applyPilotOrigins,}${origin}"`;
+    }
+    if (platform === 'win') {
+      return "$applyPilotOrigins = [Environment]::GetEnvironmentVariable('OLLAMA_ORIGINS', 'User')\n" +
+        `$applyPilotOrigins = (@($applyPilotOrigins, '${origin}') | Where-Object { $_ }) -join ','\n` +
+        "[Environment]::SetEnvironmentVariable('OLLAMA_ORIGINS', $applyPilotOrigins, 'User')";
+    }
+    return `OLLAMA_ORIGINS="\${OLLAMA_ORIGINS:+$OLLAMA_ORIGINS,}${origin}" ollama serve`;
+  }
+
+  function updateOllamaSetup() {
+    const platform = document.getElementById('ollamaSetupPlatform').value;
+    document.getElementById('ollamaSetupCommand').value = ollamaSetupCommand(platform);
+    document.getElementById('ollamaSetupNote').textContent = I18n.t(`options.llm.setupNote.${platform}`);
+    document.getElementById('ollamaSetupCopyStatus').textContent = '';
+  }
+
+  async function copyOllamaSetup() {
+    const command = document.getElementById('ollamaSetupCommand');
+    const status = document.getElementById('ollamaSetupCopyStatus');
+    try {
+      await navigator.clipboard.writeText(command.value);
+      status.textContent = I18n.t('options.llm.setupCopied');
+    } catch {
+      command.focus();
+      command.select();
+      status.textContent = I18n.t('options.llm.setupCopyFailed');
+    }
+  }
+
+  function showOllamaSetup() {
+    const details = document.getElementById('ollamaSetupDetails');
+    details.open = true;
+    details.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   function applyLangUI(lang) {
@@ -77,6 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ========== Load LLM settings ==========
   const llmSettings = await loadLLMFromStorage();
   populateLLMSettings(llmSettings);
+  if (llmSettings.provider === 'ollama') refreshOllamaModels();
 
   // ========== Auto-save (profile fields) ==========
   let saveTimer = null;
@@ -102,6 +154,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById(`config-${provider}`).style.display = 'block';
 
       saveLLMData();
+      if (provider === 'ollama') refreshOllamaModels();
     });
   });
 
@@ -137,6 +190,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ========== Test connection ==========
   document.getElementById('testConnection').addEventListener('click', testLLMConnection);
+  document.getElementById('refreshOllamaModels').addEventListener('click', refreshOllamaModels);
+  document.getElementById('ollamaBaseUrl').addEventListener('input', () => {
+    // Invalidate immediately, so a previous server cannot populate this list
+    // during the debounce window (including when the address is changed back).
+    ollamaModelsRequest++;
+    clearTimeout(ollamaModelsTimer);
+    renderOllamaModels([], document.getElementById('ollamaModel').value);
+    document.getElementById('ollamaModel').disabled = true;
+    document.getElementById('refreshOllamaModels').disabled = false;
+    document.getElementById('ollamaModelsStatus').textContent = I18n.t('options.llm.ollamaLoading');
+    ollamaModelsTimer = setTimeout(refreshOllamaModels, 500);
+  });
 
   // ========== Add custom Q&A ==========
   document.getElementById('addQaBtn').addEventListener('click', addCustomQA);
@@ -341,6 +406,60 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('anthropicModel').value = settings.model || DEFAULT_ANTHROPIC_MODEL;
     document.getElementById('openaiKey').value = settings.apiKeyOpenAI || '';
     document.getElementById('openaiModel').value = settings.modelOpenAI || DEFAULT_OPENAI_MODEL;
+    document.getElementById('ollamaBaseUrl').value = settings.ollamaBaseUrl || DEFAULT_OLLAMA_BASE_URL;
+    renderOllamaModels([], settings.modelOllama || '');
+  }
+
+  function renderOllamaModels(models, selected) {
+    const select = document.getElementById('ollamaModel');
+    select.replaceChildren();
+    const addOption = (value, label, disabled = false) => {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = label;
+      option.disabled = disabled;
+      select.appendChild(option);
+    };
+    addOption('', I18n.t('options.llm.ollamaSelectModel'));
+    // Preserve an existing choice across offline/reload states, without silently
+    // selecting a different model or presenting the old one as available.
+    if (selected && !models.includes(selected)) {
+      addOption(selected, I18n.t('options.llm.ollamaUnavailable', { model: selected }), true);
+    }
+    models.forEach(model => addOption(model, model));
+    select.value = selected;
+  }
+
+  async function refreshOllamaModels() {
+    clearTimeout(ollamaModelsTimer);
+    const request = ++ollamaModelsRequest;
+    const settings = collectLLMData();
+    if (settings.provider !== 'ollama') return;
+    const select = document.getElementById('ollamaModel');
+    const button = document.getElementById('refreshOllamaModels');
+    const status = document.getElementById('ollamaModelsStatus');
+    select.disabled = true;
+    button.disabled = true;
+    status.textContent = I18n.t('options.llm.ollamaLoading');
+    const isCurrent = () => request === ollamaModelsRequest &&
+      collectLLMData().ollamaBaseUrl === settings.ollamaBaseUrl &&
+      collectLLMData().provider === 'ollama';
+    try {
+      const models = await listOllamaModels(settings);
+      if (!isCurrent()) return;
+      const selected = settings.modelOllama || models[0] || '';
+      renderOllamaModels(models, selected);
+      if (!settings.modelOllama && selected) saveLLMData();
+      select.disabled = models.length === 0;
+      status.textContent = I18n.t(models.length ? 'options.llm.ollamaLoaded' : 'options.llm.ollamaEmpty', { count: models.length });
+    } catch (error) {
+      if (!isCurrent()) return;
+      renderOllamaModels([], settings.modelOllama);
+      status.textContent = I18n.t('options.llm.ollamaLoadError', { msg: error.message });
+      if (/Ollama 403\b/.test(error.message)) showOllamaSetup();
+    } finally {
+      if (request === ollamaModelsRequest) button.disabled = false;
+    }
   }
 
   function collectFormData() {
@@ -366,6 +485,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       model: document.getElementById('anthropicModel').value,
       apiKeyOpenAI: document.getElementById('openaiKey').value,
       modelOpenAI: document.getElementById('openaiModel').value,
+      ollamaBaseUrl: document.getElementById('ollamaBaseUrl').value.trim() || DEFAULT_OLLAMA_BASE_URL,
+      modelOllama: document.getElementById('ollamaModel').value.trim(),
     };
   }
 
@@ -404,13 +525,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     const apiKey = provider === 'anthropic' ? llm.apiKey : llm.apiKeyOpenAI;
     const model = provider === 'anthropic' ? llm.model : llm.modelOpenAI;
 
-    if (!apiKey) {
+    if (llm.provider !== 'ollama' && !apiKey) {
       statusEl.className = 'test-status error';
       statusEl.textContent = I18n.t('options.llm.noApiKey');
       return;
     }
 
     try {
+      if (provider === 'ollama') {
+        await callOllama(llm, 'Say OK', { maxTokens: 256 });
+        statusEl.className = 'test-status success';
+        statusEl.textContent = I18n.t('options.llm.testSuccess', { provider: 'Ollama', model: llm.modelOllama });
+        return;
+      }
       let response;
       if (provider === 'anthropic') {
         response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -454,7 +581,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     } catch (e) {
       statusEl.className = 'test-status error';
+      if (provider === 'ollama' && /Ollama 403\b/.test(e.message)) {
+        statusEl.textContent = I18n.t('options.llm.setupForbidden');
+        showOllamaSetup();
+        return;
+      }
       statusEl.textContent = I18n.t('options.llm.networkError', { msg: e.message });
+      if (provider === 'ollama') statusEl.textContent += ' ' + I18n.t('options.llm.ollamaTroubleshoot');
     }
   }
 
@@ -509,6 +642,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           provider: llm.provider,
           model: llm.model,
           modelOpenAI: llm.modelOpenAI,
+          ollamaBaseUrl: llm.ollamaBaseUrl,
+          modelOllama: llm.modelOllama,
           enabled: llm.enabled,
         },
         exportDate: new Date().toISOString(),
@@ -628,7 +763,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function handleSmartImport(file) {
     const llm = collectLLMData();
     const apiKey = llm.provider === 'anthropic' ? llm.apiKey : llm.apiKeyOpenAI;
-    if (!apiKey) {
+    if (llm.provider !== 'ollama' && !apiKey) {
       alert(I18n.t('options.alert.noApiKey'));
       return;
     }
@@ -764,7 +899,11 @@ Respond with ONLY the JSON object, no other text.`;
 
     let responseText;
 
-    if (provider === 'anthropic') {
+    if (provider === 'ollama') {
+      if (fileData.type === 'pdf') throw new Error(I18n.t('options.alert.ollamaNoPdf'));
+      const text = fileData.content.slice(0, 15000);
+      responseText = await callOllama(llmSettings, extractionPrompt + '\n\nDOCUMENT:\n' + text, { json: true, maxTokens: 2048 });
+    } else if (provider === 'anthropic') {
       const contentBlocks = [];
 
       if (fileData.type === 'pdf') {

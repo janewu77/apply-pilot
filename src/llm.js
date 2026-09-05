@@ -21,6 +21,8 @@ function normalizeLLMModels(settings) {
     normalized.modelOpenAI = 'gpt-5.6-terra';
   }
 
+  normalized.ollamaBaseUrl = normalized.ollamaBaseUrl || DEFAULT_OLLAMA_BASE_URL;
+  normalized.modelOllama = normalized.modelOllama || '';
   return normalized;
 }
 
@@ -31,7 +33,7 @@ async function loadLLMSettings() {
   return new Promise((resolve) => {
     chrome.storage.local.get('applyPilotLLM', (result) => {
       resolve(normalizeLLMModels(result.applyPilotLLM || {
-        provider: 'anthropic',  // 'anthropic' | 'openai'
+        provider: 'anthropic',  // 'anthropic' | 'openai' | 'ollama'
         apiKey: '',
         apiKeyOpenAI: '',
         model: DEFAULT_ANTHROPIC_MODEL,
@@ -60,7 +62,7 @@ async function saveLLMSettings(settings) {
 async function llmMatchFields(unmatchedFields, profileData) {
   const settings = await loadLLMSettings();
   const activeKey = settings.provider === 'openai' ? settings.apiKeyOpenAI : settings.apiKey;
-  if (!settings.enabled || !activeKey) {
+  if (!settings.enabled || (settings.provider === 'ollama' ? !settings.modelOllama?.trim() : !activeKey)) {
     return {};
   }
 
@@ -85,7 +87,9 @@ Only respond with valid JSON, no explanation. Example: {"0": "personal.email", "
   try {
     let responseText;
     // console.log(prompt);
-    if (settings.provider === 'anthropic') {
+    if (settings.provider === 'ollama') {
+      responseText = await callOllama(settings, prompt, { json: true });
+    } else if (settings.provider === 'anthropic') {
       responseText = await callAnthropic(settings, prompt);
     } else {
       responseText = await callOpenAI(settings, prompt);
@@ -120,7 +124,7 @@ Only respond with valid JSON, no explanation. Example: {"0": "personal.email", "
 async function llmGenerateAnswer(question, profileData, jobContext = '') {
   const settings = await loadLLMSettings();
   const activeKey = settings.provider === 'openai' ? settings.apiKeyOpenAI : settings.apiKey;
-  if (!settings.enabled || !activeKey) {
+  if (!settings.enabled || (settings.provider === 'ollama' ? !settings.modelOllama?.trim() : !activeKey)) {
     return null;
   }
 
@@ -149,7 +153,9 @@ Question: "${question}"
 Write a natural, professional response (2-4 sentences). Use first person. Be specific and authentic.`;
 
   try {
-    if (settings.provider === 'anthropic') {
+    if (settings.provider === 'ollama') {
+      return await callOllama(settings, prompt);
+    } else if (settings.provider === 'anthropic') {
       return await callAnthropic(settings, prompt);
     } else {
       return await callOpenAI(settings, prompt);
@@ -171,7 +177,7 @@ Write a natural, professional response (2-4 sentences). Use first person. Be spe
 async function llmGenerateAnswers(questions, profileData, jobContext = '') {
   const settings = await loadLLMSettings();
   const activeKey = settings.provider === 'openai' ? settings.apiKeyOpenAI : settings.apiKey;
-  if (!settings.enabled || !activeKey || questions.length === 0) {
+  if (!settings.enabled || (settings.provider === 'ollama' ? !settings.modelOllama?.trim() : !activeKey) || questions.length === 0) {
     return {};
   }
 
@@ -204,7 +210,9 @@ Only respond with valid JSON, no explanation. Example: {"0": "I have 5 years of 
 
   try {
     let responseText;
-    if (settings.provider === 'anthropic') {
+    if (settings.provider === 'ollama') {
+      responseText = await callOllama(settings, prompt, { json: true });
+    } else if (settings.provider === 'anthropic') {
       responseText = await callAnthropic(settings, prompt);
     } else {
       responseText = await callOpenAI(settings, prompt);

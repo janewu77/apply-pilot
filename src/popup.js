@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ── Injection ────────────────────────────────────────────
-  const CONTENT_SCRIPTS = ['i18n.js', 'profile.js', 'matcher.js', 'llm.js', 'content.js'];
+  const CONTENT_SCRIPTS = ['i18n.js', 'profile.js', 'matcher.js', 'ollama.js', 'llm.js', 'content.js'];
   const CONTENT_CSS = ['styles/overlay.css'];
 
   async function injectIfNeeded(tabId) {

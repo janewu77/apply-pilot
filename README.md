@@ -14,10 +14,10 @@ Save your profile once — name, contact info, work history, education, and Q&A 
 
 - ⚡ **Keyword matching**: instantly maps your profile to form fields
 - 🔄 **Learned answers**: reuses answers you've saved from previous applications
-- 🤖 **AI semantic matching** (optional): connects to Claude or GPT to handle fields that don't match keywords
+- 🤖 **AI semantic matching** (optional): connects to Claude, GPT, or local Ollama models to handle fields that don't match keywords
 - 🟡 **Colour-coded labels**: Blue = matched · Green = filled · Yellow = unmatched, fill manually
 - 📚 **Auto-learning**: manually fill a yellow field once, and it's remembered for next time
-- 🔒 **Privacy-first**: all data stays in Chrome Storage — nothing sent to any server
+- 🔒 **Privacy-first**: profiles stay in Chrome Storage; AI requests go only to your selected service
 - ✅ **You stay in control**: nothing is submitted automatically
 
 Supports forms in English · Deutsch · 中文. Works on most job sites. No account required. No data collected.
@@ -51,10 +51,23 @@ After installation the settings page opens automatically. Fill in:
 
 ### 2. Configure AI (optional but recommended)
 Go to the **AI Settings** tab:
-- Choose Anthropic (Claude) or OpenAI (GPT)
-- Enter the corresponding API key
+- Choose Anthropic (Claude), OpenAI (GPT), or Ollama (Local)
+- Enter an API key for cloud providers, or a local server address and a model selected from the dropdown for Ollama (no key required)
 - Click **Test connection** to verify
 - Check **Enable AI semantic matching**
+
+### Using local Ollama
+
+The settings page includes first-time setup guidance with platform-specific commands for the installed extension and a copy button. HTTP 403 automatically expands the instructions, including the macOS login-session lifetime and full-restart steps.
+
+1. Start Ollama and run `ollama list` to see installed models.
+2. In **AI Settings → Ollama (Local)**, enter the server address (default: `http://127.0.0.1:11434`). `localhost`, `127.0.0.1`, `[::1]`, and custom ports are supported. Do not append `/api`.
+3. Selecting Ollama automatically loads available models into a dropdown. Use **Refresh models** to reload; changing the address also refreshes the list. On first use, the first listed model is selected and saved by default; subsequent visits keep your selection.
+4. Click **Test Connection**, then enable AI semantic matching. Empty lists and connection failures display a message without clearing a saved model.
+
+Supports field matching, single/batch answer generation, and TXT/Markdown smart import. Convert PDFs to text first. The extension does not download models. Initial loading and generation depend on your hardware; requests time out after 120 seconds. Choose a downloaded local model; Ollama cloud models still run remotely.
+
+If connection fails, check the address and model name. For `403`, follow the [Ollama FAQ](https://docs.ollama.com/faq): allow `chrome-extension://YOUR_EXTENSION_ID` in `OLLAMA_ORIGINS`, then restart Ollama. Find the ID at `chrome://extensions/`. For the macOS app, run `launchctl setenv OLLAMA_ORIGINS "chrome-extension://YOUR_EXTENSION_ID"`, then quit and reopen Ollama. No LAN exposure is needed.
 
 ### 3. Start using
 Open any job application page. Two ways to trigger:
@@ -72,7 +85,7 @@ Round 1: Keyword matching (instant)
     ↓
 Round 2: Reuse learned answers from history (exact clue match)
     ↓
-Round 3: AI semantic matching (if enabled, ~1–3 s)
+Round 3: AI semantic matching (if enabled; speed depends on model and hardware)
     ↓
 Colour-coded labels appear on page:
   🔵 Blue  = matched, click to fill
@@ -118,8 +131,8 @@ Keyword matching supports forms in three languages:
 
 ## Data & Privacy
 
-- All data is stored locally in Chrome Storage — **nothing is sent to any server**
-- Your API key is only used to call the AI API when you enable that feature
+- Profiles and settings are stored in Chrome Storage; AI matching, answer generation, and smart import send the required content to your selected service
+- Cloud API keys are used for AI actions you enable or explicitly trigger; Ollama inference stays on your machine when using downloaded local models
 - Exported profiles **do not include your API key**
 - You can export a backup or reset all data at any time under Data Management
 - You can separately **export / import Common Q&A** as JSON

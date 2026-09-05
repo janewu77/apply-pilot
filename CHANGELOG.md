@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.0] - 2026-09-05
+
+### Added
+- Local Ollama provider with configurable loopback address and installed model name, without an API key
+- Background transport for local inference, connection testing, field matching, answer generation, and TXT/Markdown smart import
+- Automatic Ollama model discovery, dropdown selection with a saved default, refresh control, and offline/empty-list feedback
+- Settings-page Ollama setup guidance with per-extension commands, platform selection, copy support, and automatic guidance on HTTP 403
+- Ollama regression tests and bilingual setup instructions
+
+### Changed
+- Require Chrome 110+ to keep slow local inference alive in the background worker
+
 ## [2.1.1] - 2026-09-04
 
 ### Changed

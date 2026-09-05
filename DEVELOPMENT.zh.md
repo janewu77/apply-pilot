@@ -4,7 +4,7 @@
 
 ## 环境要求
 
-- Google Chrome 浏览器（Manifest V3 支持，Chrome 88+）
+- Google Chrome 浏览器（Manifest V3 支持，Chrome 110+）
 - 无需 Node.js / 构建工具 —— 这是一个纯原生 JS 扩展，直接加载即可运行
 
 ## 本地加载扩展
@@ -26,7 +26,7 @@ apply-pilot/
 │   ├── background.js        # Service Worker：处理快捷键、安装事件
 │   ├── content.js           # Content Script 主控制器：扫描、匹配、填充、UI 注入
 │   ├── matcher.js           # 关键词匹配引擎（英/德/中三语关键词表）
-│   ├── llm.js               # LLM 语义匹配模块（Anthropic / OpenAI API 调用）
+│   ├── llm.js               # LLM 语义匹配模块（Anthropic / OpenAI / Ollama）
 │   ├── profile.js           # 用户档案数据结构与 Chrome Storage 读写
 │   ├── popup.html           # 点击扩展图标弹出的小窗口
 │   ├── popup.js             # 弹窗逻辑
@@ -68,7 +68,7 @@ apply-pilot/
 - `extractFieldClues(element)` — 提取字段的 label、name、placeholder 等线索，供 LLM 和自动学习使用
 
 ### `llm.js`
-当关键词匹配失败时，调用 LLM API 做语义推断。支持 Anthropic (Claude) 和 OpenAI (GPT)。API Key 由用户在设置页面输入，仅存储在本地 Chrome Storage 中，导出档案时不包含。
+当关键词匹配失败时，调用 LLM API 做语义推断。支持 Anthropic (Claude)、OpenAI (GPT) 和 Ollama 本地模型。API Key 由用户在设置页面输入，仅存储在本地 Chrome Storage 中，导出档案时不包含。
 
 ### `content.js`
 Content Script 主控制器，注入到所有页面。负责：
@@ -106,7 +106,7 @@ chrome.storage.local.get('applyPilotProfile')
 
 // LLM 设置
 chrome.storage.local.get('applyPilotLLM')
-// { provider, apiKey, apiKeyOpenAI, model, modelOpenAI, enabled }
+// { provider, apiKey, apiKeyOpenAI, model, modelOpenAI, ollamaBaseUrl, modelOllama, enabled }
 ```
 
 ## React / Vue 兼容性处理
@@ -122,3 +122,13 @@ chrome.storage.local.get('applyPilotLLM')
 - **Content Script 日志**：打开目标页面的 DevTools → Console，过滤 `[Apply Pilot]`
 - **Background 日志**：`chrome://extensions/` → 扩展卡片 → "Service Worker" 链接 → Console
 - **Storage 内容查看**：DevTools → Application → Storage → Local Storage（注意：扩展的 Storage 在扩展自己的 DevTools 里，不是页面的）→ 或在 background console 执行 `chrome.storage.local.get(null, console.log)`
+
+## Ollama 调用与验证
+
+`ollama.js` 供设置页、注入脚本与后台共享，通过后台调用本地 `/api/chat`。使用非流式响应，结构化任务使用 JSON 模式，超时 120 秒。仅允许回环地址和固定接口，拒绝重定向。网页请求读取已保存的配置并检查启用状态；设置页可测试未保存配置，或在自动匹配关闭时主动导入简历。
+
+运行 `npm test`（Node.js 18+）检查模拟接口、云端兼容、设置与导入；`npm run build` 更新 `dist/`。真实模型验证：启动 Ollama 后运行 `node scripts/test-ollama-live.js 完整模型名`，仅发送合成测试数据。浏览器验收还需重新加载扩展与目标页，测试连接，并分别通过弹窗和快捷键扫描表单。
+
+Ollama 推理期间每 20 秒调用一次扩展 API，避免后台因空闲被 Chrome 回收；完成、失败或 120 秒超时后立即停止。该机制要求 Chrome 110+。
+
+模型发现由设置页通过后台调用 `GET /api/tags`，10 秒超时，不发送档案数据、不加载模型。运行 `node scripts/test-ollama-live.js --list-only` 可仅验证模型列表。未保存模型时，默认选中排序后的第一个模型并保存；已有选择会保留，缺失时标注尚未确认可用。请求序号防止旧服务地址的响应覆盖新列表。

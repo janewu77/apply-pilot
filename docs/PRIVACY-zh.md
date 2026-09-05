@@ -1,6 +1,6 @@
 # 隐私政策 — Apply Pilot
 
-**最后更新：2026 年 4 月 16 日**
+**最后更新：2026 年 9 月 5 日**
 
 Apply Pilot（「本扩展」）是一款 Chrome 扩展，可依据你在本机自行创建并管理的个人档案，自动填写求职申请表单。
 
@@ -19,7 +19,7 @@ Apply Pilot 使用 Chrome 内置的 `chrome.storage.local` API，将以下数据
 | 教育背景 | 学位、院校、专业、毕业年份 |
 | 技能 | 编程语言、技术技能、证书 |
 | 预写答案 | 你对常见申请问题预先准备的回答（例如「你为什么想要这个职位？」） |
-| AI 服务商设置 | 你选择的 AI 服务商（Anthropic 或 OpenAI）、模型名称、API 密钥 — 仅保存在本地 |
+| AI 服务商设置 | 你选择的 AI 服务商（Anthropic、OpenAI 或 Ollama）、模型名称、本地服务地址、云端 API 密钥 — 仅保存在本地 |
 
 **我们不运营任何服务器。上述数据均不会传送给 Apply Pilot 或其开发者。**
 
@@ -38,24 +38,28 @@ Apply Pilot 使用 Chrome 内置的 `chrome.storage.local` API，将以下数据
 
 ## 3. 可选 AI 功能与向第三方传输数据
 
-Apply Pilot 包含一项**可选的 AI 匹配功能**，由第三方大语言模型（LLM）API 提供支持。该功能**默认关闭**，仅在你满足以下条件时才会启用：
+Apply Pilot 包含一项**可选的 AI 匹配功能**，由云端大语言模型（LLM）API 或本地 Ollama 服务提供支持。该功能**默认关闭**，仅在你满足以下条件时才会启用：
 
 1. 在扩展的「设置」页面中明确开启，且  
-2. 自行提供来自 Anthropic 或 OpenAI 的 API 密钥。
+2. 自行提供来自 Anthropic 或 OpenAI 的 API 密钥，或配置本地 Ollama 模型。
 
-**在启用 AI 时**，以下数据会发送给你所选 API 服务商（Anthropic 或 OpenAI）：
+**在启用 AI 时**，以下数据会发送给你所选的服务（Anthropic、OpenAI 或 Ollama）：
 
 - 档案中的选定字段（例如职位、工作年限、技能、教育背景、预写答案）
 - 当前页面上未匹配表单字段的相关信息（字段标签、占位符、输入类型等）
 
 这些数据由浏览器**直接**发送给 API 服务商，**不会**经由任何 Apply Pilot 服务器中转。
 
+Ollama 请求由扩展后台转发至你配置的本机回环地址。已下载的本地模型在本机运行；通过 Ollama 使用云模型仍会远程运行。扩展不会自动下载模型。
+
+智能导入是主动操作，即使自动 AI 匹配关闭，也会将所选文档内容发送至配置的服务。测试连接仅发送简短测试提示。Ollama 智能导入支持文本和 Markdown，暂不支持 PDF。
+
 请查阅你所选服务商的隐私政策：
 
 - Anthropic: https://www.anthropic.com/privacy
 - OpenAI: https://openai.com/policies/privacy-policy
 
-**若你未启用 AI 功能，则不会有任何数据被发送到外部服务。**
+**若你未启用自动 AI 匹配，也未主动触发 AI 操作，则不会发送 AI 请求。**
 
 ---
 
@@ -77,7 +81,7 @@ Apply Pilot 无法访问你已存储的数据，无法代为读取，也无法�
 | `storage` | 在设备本地保存你的档案与设置 |
 | `activeTab` | 读取当前标签页的 URL，以识别正在使用的页面 |
 | `scripting` | 在你触发时，将表单填写脚本注入当前页面 |
-| `host_permissions: <all_urls>` | 求职申请表单分布在大量雇主与招聘平台网站上。需要较宽泛的主机权限，扩展才能在你选择使用的任意网站上工作。 |
+| 回环地址主机权限（localhost、127.0.0.1、[::1]；HTTP/HTTPS） | 允许扩展后台调用本机 Ollama 服务，不授予任意网站访问权限。 |
 
 ---
 

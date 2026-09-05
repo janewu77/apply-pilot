@@ -53,7 +53,7 @@
 <body>
 
 <h1>Privacy Policy — Apply Pilot</h1>
-<p class="meta">Last updated: April 16, 2026</p>
+<p class="meta">Last updated: September 5, 2026</p>
 
 <p>Apply Pilot ("the Extension") is a Chrome extension that helps you auto-fill job application forms using a personal profile you create and manage entirely on your own device.</p>
 
@@ -75,7 +75,7 @@
     <tr><td>Education</td><td>Degree, university, major, graduation year</td></tr>
     <tr><td>Skills</td><td>Programming languages, technical skills, certifications</td></tr>
     <tr><td>Pre-written answers</td><td>Your prepared answers to common application questions (e.g., "Why do you want this role?")</td></tr>
-    <tr><td>AI provider settings</td><td>Your chosen AI provider (Anthropic or OpenAI), model name, and API key — stored locally only</td></tr>
+    <tr><td>AI provider settings</td><td>Your chosen AI provider (Anthropic, OpenAI, or Ollama), model name, local server address, and any cloud API key — stored locally only</td></tr>
   </tbody>
 </table>
 
@@ -97,13 +97,13 @@
 
 <h2>3. Optional AI Features and Third-Party Data Transmission</h2>
 
-<p>Apply Pilot includes an <strong>optional AI matching feature</strong> powered by third-party large language model (LLM) APIs. This feature is <strong>disabled by default</strong> and only activates when you:</p>
+<p>Apply Pilot includes an <strong>optional AI matching feature</strong> powered by cloud large language model (LLM) APIs or a local Ollama server. This feature is <strong>disabled by default</strong> and only activates when you:</p>
 <ol>
   <li>Explicitly enable it in the extension's Settings page, and</li>
-  <li>Provide your own API key from Anthropic or OpenAI.</li>
+  <li>Provide your own API key from Anthropic or OpenAI, or configure a local Ollama model.</li>
 </ol>
 
-<p><strong>When AI is enabled</strong>, the following data is sent to the API provider you selected (Anthropic or OpenAI):</p>
+<p><strong>When AI is enabled</strong>, the following data is sent to the service you selected (Anthropic, OpenAI, or Ollama):</p>
 <ul>
   <li>Selected fields from your profile (e.g., job title, years of experience, skills, education, pre-written answers)</li>
   <li>Information about unmatched form fields on the current page (field labels, placeholders, input types)</li>
@@ -111,13 +111,16 @@
 
 <p>This data is transmitted directly from your browser to the API provider. It is <strong>not</strong> routed through any Apply Pilot server.</p>
 
+<p>Ollama requests go through the extension background worker to your configured loopback address. Downloaded local models run on your device; cloud models served through Ollama still run remotely. The extension does not download models automatically.</p>
+<p>Smart import is an explicit action that sends the selected document content to the configured service, even when automatic AI matching is disabled. Connection testing sends a short test prompt. Ollama smart import supports text and Markdown, not PDF.</p>
+
 <p>Please review the privacy policies of your chosen provider:</p>
 <ul>
   <li>Anthropic: <a href="https://www.anthropic.com/privacy" target="_blank">https://www.anthropic.com/privacy</a></li>
   <li>OpenAI: <a href="https://openai.com/policies/privacy-policy" target="_blank">https://openai.com/policies/privacy-policy</a></li>
 </ul>
 
-<p><strong>If you do not enable the AI feature, no data is ever sent to any external service.</strong></p>
+<p><strong>If you neither enable automatic AI matching nor explicitly invoke an AI action, no AI requests are sent.</strong></p>
 
 <hr>
 
@@ -143,7 +146,7 @@
     <tr><td><code>storage</code></td><td>Save your profile and settings locally on your device</td></tr>
     <tr><td><code>activeTab</code></td><td>Read the current tab's URL to identify the active page</td></tr>
     <tr><td><code>scripting</code></td><td>Inject the form-filling script into the current page when you trigger it</td></tr>
-    <tr><td><code>host_permissions: &lt;all_urls&gt;</code></td><td>Job application forms exist across thousands of different employer and recruiting platform websites. Broad host permission is required so the extension can work on any site you choose to use it on.</td></tr>
+    <tr><td>Loopback host permissions (localhost, 127.0.0.1, [::1]; HTTP/HTTPS)</td><td>Allow the background worker to call your local Ollama server. These permissions do not grant access to arbitrary websites.</td></tr>
   </tbody>
 </table>
 
